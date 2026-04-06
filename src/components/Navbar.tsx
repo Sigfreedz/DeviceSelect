@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
           <li><a href="/top-devices" onClick={navigate('/top-devices')} className={currentPath === '/top-devices' ? styles.active : ''}>Top Devices</a></li>
           <li><a href="/recommend" onClick={navigate('/recommend')} className={currentPath === '/recommend' ? styles.active : ''}>Recommend</a></li>
           <li><a href="/compare" onClick={navigate('/compare')} className={currentPath === '/compare' ? styles.active : ''}>Compare</a></li>
-          <li><a href="/guides">Guides</a></li>
+          <li><a href="/guides" onClick={navigate('/guides')} className={currentPath === '/guides' ? styles.active : ''}>Guides</a></li>
           <li><a href="/standards">Standards</a></li>
           <li><a href="/about">About</a></li>
         </ul>
