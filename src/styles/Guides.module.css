@@ -1,0 +1,654 @@
+/* ─── Page Wrapper ─────────────────────────────────────────────────── */
+.main {
+  min-height: calc(100vh - var(--nav-height));
+  padding: 80px 20px 60px;
+  background: var(--gradient-main);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ─── Hero / Header ─────────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: var(--accent-violet);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+
+.heroTitle span {
+  background: linear-gradient(135deg, var(--accent-violet), #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSub {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+.ctaRow {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ctaBtn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+.ctaPrimary {
+  background: var(--accent-violet);
+  color: #fff;
+}
+
+.ctaPrimary:hover {
+  background: var(--accent-violet-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+}
+
+.ctaSecondary {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ─── Section heading ────────────────────────────────────────────────── */
+.sectionLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-violet);
+  margin-bottom: 10px;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.sectionSub {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 32px;
+}
+
+/* ─── Accordion ──────────────────────────────────────────────────────── */
+.accordionList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 60px;
+}
+
+.accordionItem {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.accordionItem.open {
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.accordionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.2s ease;
+}
+
+.accordionHeader:hover {
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.accordionIcon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.accordionMeta {
+  flex: 1;
+}
+
+.accordionNumber {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-violet);
+  margin-bottom: 4px;
+}
+
+.accordionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.accordionSummary {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+.chevron {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  transition: transform 0.35s ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ─── Accordion Body ─────────────────────────────────────────────────── */
+.accordionBody {
+  padding: 0 28px 30px;
+  animation: fadeSlide 0.3s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Tutorial content helpers ───────────────────────────────────────── */
+.tutorialIntro {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin: 20px 0 24px;
+}
+
+.tutorialIntro strong {
+  color: var(--text-primary);
+}
+
+.stepList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stepList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.stepList li strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.stepNum {
+  background: var(--accent-violet);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ─── Workload cards grid ────────────────────────────────────────────── */
+.workloadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.workloadCard {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 22px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.workloadCard:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  transform: translateY(-3px);
+}
+
+.workloadCardIcon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.workloadCardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.workloadCardList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.workloadCardList li {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.workloadCardList li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--accent-violet);
+  font-weight: 700;
+}
+
+/* ─── Spec emphasis tag ──────────────────────────────────────────────── */
+.specTag {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 2px;
+}
+
+/* ─── Budget tier cards ──────────────────────────────────────────────── */
+.budgetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.budgetCard {
+  border-radius: 14px;
+  padding: 24px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.budgetCard.tier1 { border-top: 3px solid #60a5fa; }
+.budgetCard.tier2 { border-top: 3px solid #34d399; }
+.budgetCard.tier3 { border-top: 3px solid #f59e0b; }
+.budgetCard.tier4 { border-top: 3px solid #f472b6; }
+
+.budgetPrice {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.budgetLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.budgetList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.budgetList li {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.budgetList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.budgetList li.warn::before {
+  content: '!';
+  color: #f59e0b;
+}
+
+/* ─── Portability columns ────────────────────────────────────────────── */
+.portabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.portCard {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.portCard:nth-child(1) { border-top: 3px solid #38bdf8; }
+.portCard:nth-child(2) { border-top: 3px solid #a78bfa; }
+.portCard:nth-child(3) { border-top: 3px solid #fb923c; }
+
+.portIcon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.portTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.portList {
+  list-style: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.portList li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.portList li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--accent-violet);
+  font-weight: 900;
+}
+
+/* ─── Device-type row ────────────────────────────────────────────────── */
+.deviceTypeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0 28px;
+}
+
+.deviceTypeCard {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+}
+
+.deviceTypeCard h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.deviceTypeCard p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ─── OS cards ───────────────────────────────────────────────────────── */
+.osGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.osCard {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.osCard h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.osCard ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.osCard ul li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.osCard ul li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--accent-violet);
+  font-weight: 700;
+}
+
+/* ─── Warn / Info callout boxes ──────────────────────────────────────── */
+.calloutList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.callout.warn {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #fcd34d;
+}
+
+.callout.info {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+}
+
+.calloutEmoji {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* ─── Checklist ──────────────────────────────────────────────────────── */
+.checklistGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(16, 185, 129, 0.07);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.checkItem strong {
+  color: #d1fae5;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.checkIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── Sub-section headings inside accordion ──────────────────────────── */
+.subHeading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  margin: 22px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* ─── Bottom CTA banner ──────────────────────────────────────────────── */
+.bottomCta {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+}
+
+.bottomCta h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.bottomCta p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+.bottomCtaRow {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .heroTitle { font-size: 2.2rem; }
+  .portabilityGrid { grid-template-columns: 1fr; }
+  .deviceTypeRow { grid-template-columns: 1fr; }
+  .accordionHeader { padding: 18px 20px; }
+  .accordionBody { padding: 0 20px 24px; }
+  .workloadGrid { grid-template-columns: 1fr; }
+  .budgetGrid { grid-template-columns: repeat(2, 1fr); }
+  .bottomCta { padding: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+  .heroTitle { font-size: 1.9rem; }
+  .budgetGrid { grid-template-columns: 1fr; }
+  .osGrid { grid-template-columns: 1fr; }
+  .ctaRow { flex-direction: column; align-items: center; }
+}
