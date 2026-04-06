@@ -1,0 +1,235 @@
+.main {
+  padding-top: var(--nav-height);
+  min-height: calc(100vh - 150px);
+  background: var(--gradient-main);
+  color: white;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  background: linear-gradient(to right, #fff, var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.selectionArea {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--accent-violet);
+}
+
+.devicePicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pickerItem {
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  color: white;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.pickerItem:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-violet);
+}
+
+.pickerItem.selected {
+  background: var(--accent-violet);
+  border-color: var(--accent-violet);
+}
+
+.pickerItem:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pickerName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pickerPrice {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.compareTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.compareTable th, 
+.compareTable td {
+  padding: 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stickyCol {
+  position: sticky;
+  left: 0;
+  background: var(--secondary-bg);
+  z-index: 10;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.specLabel {
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.deviceHeader {
+  width: 25%;
+}
+
+.deviceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.brand {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent-violet);
+}
+
+.name {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.removeBtn {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff4d4d;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  width: fit-content;
+}
+
+.removeBtn:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.emptyHeader {
+  width: 25%;
+  opacity: 0.3;
+}
+
+.placeholder {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.highlight {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  font-weight: 600;
+  position: relative;
+}
+
+.highlight::after {
+  content: 'BEST';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.6rem;
+  background: var(--accent-violet);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--glass-bg);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.emptyState p {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .compareTable {
+    font-size: 0.9rem;
+  }
+}

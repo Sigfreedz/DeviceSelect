@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "MacBook Air M2",
+    "brand": "Apple",
+    "type": "Laptop",
+    "specs": { "cpu": "Apple M2 8-core", "ram": 16, "storage": 512, "gpu": "10-core GPU", "display": "13.6\" Liquid Retina" },
+    "price": 75000,
+    "category": "Programming",
+    "portability": "Lightweight",
+    "badge": { "text": "Best for Programming", "type": "programming" },
+    "scores": { "web_dev": 95, "networking": 70, "multimedia": 85, "cybersecurity": 80 }
+  },
+  {
+    "id": 2,
+    "name": "ASUS Vivobook 16",
+    "brand": "ASUS",
+    "type": "Laptop",
+    "specs": { "cpu": "Intel Core i5-12500H", "ram": 16, "storage": 512, "gpu": "Intel Iris Xe", "display": "16\" WUXGA" },
+    "price": 38000,
+    "category": "General",
+    "portability": "Balanced",
+    "badge": { "text": "Best Value", "type": "value" },
+    "scores": { "web_dev": 80, "networking": 75, "multimedia": 65, "cybersecurity": 70 }
+  },
+  {
+    "id": 3,
+    "name": "Lenovo ThinkPad E14",
+    "brand": "Lenovo",
+    "type": "Laptop",
+    "specs": { "cpu": "Ryzen 7 5825U", "ram": 16, "storage": 512, "gpu": "AMD Radeon", "display": "14\" FHD" },
+    "price": 48000,
+    "category": "Cybersecurity",
+    "portability": "Durable",
+    "badge": { "text": "Most Durable", "type": "durable" },
+    "scores": { "web_dev": 85, "networking": 90, "multimedia": 60, "cybersecurity": 95 }
+  },
+  {
+    "id": 4,
+    "name": "Dell G15 Gaming",
+    "brand": "Dell",
+    "type": "Laptop",
+    "specs": { "cpu": "Intel Core i7-12700H", "ram": 16, "storage": 1024, "gpu": "RTX 3060", "display": "15.6\" 165Hz" },
+    "price": 72000,
+    "category": "Networking",
+    "portability": "High Performance",
+    "badge": { "text": "Best for Networking", "type": "networking" },
+    "scores": { "web_dev": 90, "networking": 95, "multimedia": 90, "cybersecurity": 90 }
+  },
+  {
+    "id": 5,
+    "name": "Acer Swift Edge",
+    "brand": "Acer",
+    "type": "Laptop",
+    "specs": { "cpu": "Ryzen 7 6800U", "ram": 16, "storage": 1024, "gpu": "Radeon 680M", "display": "16\" 4K OLED" },
+    "price": 62000,
+    "category": "Multimedia",
+    "portability": "Lightweight",
+    "badge": { "text": "Best for Multimedia", "type": "performance" },
+    "scores": { "web_dev": 90, "networking": 70, "multimedia": 95, "cybersecurity": 75 }
+  },
+  {
+    "id": 6,
+    "name": "iPad Pro M4",
+    "brand": "Apple",
+    "type": "Tablet",
+    "specs": { "cpu": "Apple M4", "ram": 8, "storage": 256, "gpu": "10-core GPU", "display": "11\" Ultra Retina XDR" },
+    "price": 65000,
+    "category": "Multimedia",
+    "portability": "Ultraportable",
+    "badge": { "text": "Best for Digital Art", "type": "multimedia" },
+    "scores": { "web_dev": 60, "networking": 50, "multimedia": 98, "cybersecurity": 55 }
+  },
+  {
+    "id": 7,
+    "name": "Samsung Galaxy Tab S9 Ultra",
+    "brand": "Samsung",
+    "type": "Tablet",
+    "specs": { "cpu": "Snapdragon 8 Gen 2", "ram": 12, "storage": 256, "gpu": "Adreno 740", "display": "14.6\" Dynamic AMOLED" },
+    "price": 58000,
+    "category": "General",
+    "portability": "Ultraportable",
+    "badge": { "text": "Largest Display Tablet", "type": "value" },
+    "scores": { "web_dev": 70, "networking": 60, "multimedia": 90, "cybersecurity": 65 }
+  },
+  {
+    "id": 8,
+    "name": "Custom Build PC - Mid",
+    "brand": "Generic",
+    "type": "Desktop",
+    "specs": { "cpu": "Intel Core i5-13400", "ram": 32, "storage": 1024, "gpu": "RTX 4060", "display": "N/A" },
+    "price": 55000,
+    "category": "Networking",
+    "portability": "Stationary",
+    "badge": { "text": "Best Upgradeable", "type": "performance" },
+    "scores": { "web_dev": 90, "networking": 90, "multimedia": 85, "cybersecurity": 88 }
+  }
+]

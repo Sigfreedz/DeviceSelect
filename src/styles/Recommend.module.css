@@ -1,0 +1,260 @@
+.main {
+  min-height: calc(100vh - var(--nav-height) - 100px);
+  padding: 80px 20px;
+  background: var(--gradient-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 60px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+}
+
+.progress {
+  margin-bottom: 40px;
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--accent-violet);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  margin-bottom: 15px;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+.stepText {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.wizardStep {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  color: #fff;
+  text-align: center;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.optionBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.optionBtn:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--accent-violet);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+}
+
+.optionIcon {
+  font-size: 2.5rem;
+}
+
+.optionPrice {
+  font-size: 1.5rem;
+  color: var(--accent-violet);
+  font-weight: 800;
+}
+
+.resultContainer {
+  animation: scaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.matchBadge {
+  background: #10b981;
+  color: white;
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.resultTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  color: #fff;
+}
+
+.recommendationCard {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: left;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.recImage {
+  font-size: 4rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+.recBasicInfo {
+  flex: 1;
+}
+
+.recBrand {
+  font-size: 0.9rem;
+  color: var(--accent-violet);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.recName {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 5px 0 10px;
+}
+
+.recBadge {
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--accent-violet);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.recPrice {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.recSpecs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.specItem {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.specItem strong {
+  color: #fff;
+}
+
+.whyText {
+  margin-bottom: 40px;
+}
+
+.whyText h4 {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.whyText p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.actionGroup {
+  display: flex;
+  gap: 20px;
+}
+
+.primaryBtn {
+  flex: 1;
+  background: var(--accent-violet);
+  color: white;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.secondaryBtn {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 16px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.primaryBtn:hover {
+  background: var(--accent-violet-hover);
+  transform: translateY(-2px);
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .container { padding: 30px; }
+  .optionsGrid { grid-template-columns: 1fr; }
+  .cardHeader { flex-direction: column; text-align: center; }
+  .recSpecs { grid-template-columns: 1fr; }
+  .actionGroup { flex-direction: column; }
+  .question { font-size: 1.8rem; }
+}
