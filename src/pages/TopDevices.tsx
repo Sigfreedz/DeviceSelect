@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import FilterSidebar from '../components/FilterSidebar';
-import DeviceCard, { Device } from '../components/DeviceCard';
+import DeviceCard from '../components/DeviceCard';
 import deviceData from '../data/devices.json';
 import styles from '../styles/TopDevices.module.css';
 

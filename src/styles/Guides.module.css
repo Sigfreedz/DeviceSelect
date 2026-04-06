@@ -1,0 +1,594 @@
+.main {
+  min-height: 100vh;
+  background: var(--gradient-main);
+  color: white;
+}
+
+/* ── Hero ──────────────────────────────────────── */
+.hero {
+  padding-top: calc(var(--nav-height) + 60px);
+  padding-bottom: 80px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(76, 29, 149, 0.3) 0%, transparent 100%);
+}
+
+.heroInner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--accent-violet);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.gradientText {
+  background: linear-gradient(to right, #fff, var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* ── Shared Buttons ──────────────────────────────── */
+.primaryBtn {
+  background: var(--accent-violet);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.primaryBtn:hover {
+  background: var(--accent-violet-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ── Content wrapper ─────────────────────────────── */
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* ── Generic Section ─────────────────────────────── */
+.section {
+  margin-bottom: 80px;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.sectionSubtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 36px;
+}
+
+/* ── Decision Flow Steps ─────────────────────────── */
+.stepsRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.stepCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px 18px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stepCard:hover {
+  border-color: var(--accent-violet);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+}
+
+.stepNum {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-violet);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin: 0 auto 12px;
+}
+
+.stepIcon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stepLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.stepDesc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Workload Cards ──────────────────────────────── */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.workloadCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.workloadCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+}
+
+.workloadHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  border-bottom: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.workloadIcon {
+  font-size: 2rem;
+}
+
+.workloadTrack {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.workloadBody {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workloadRow {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.label {
+  font-weight: 700;
+  color: #fff;
+}
+
+.tipBox {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.83rem;
+  color: #c4b5fd;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* ── Spec Table ──────────────────────────────────── */
+.tableWrapper {
+  overflow-x: auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.specTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.specTable th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.specTable td {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+.specTable tr:last-child td {
+  border-bottom: none;
+}
+
+.specTable tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.compCell {
+  font-weight: 700;
+  color: #fff !important;
+  white-space: nowrap;
+}
+
+.recCell {
+  color: #c4b5fd !important;
+  font-weight: 600;
+}
+
+.whyCell {
+  font-size: 0.85rem !important;
+}
+
+/* ── Budget Tiers ────────────────────────────────── */
+.budgetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.budgetCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 3px solid transparent;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.budgetCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.budgetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.budgetTier {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.budgetPrice {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.budgetBestFor {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.budgetExpect {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.budgetWarn {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #fde68a;
+  line-height: 1.5;
+}
+
+/* ── Portability Cards ───────────────────────────── */
+.portGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.portCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 3px solid transparent;
+  border-radius: 16px;
+  padding: 30px 24px;
+  transition: all 0.3s ease;
+}
+
+.portCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+}
+
+.portIcon {
+  font-size: 2.4rem;
+  margin-bottom: 14px;
+}
+
+.portTitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #fff;
+}
+
+.portSubtitle {
+  font-size: 0.85rem;
+  color: var(--accent-violet);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.portList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.portList li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding-left: 18px;
+  position: relative;
+}
+
+.portList li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--accent-violet);
+}
+
+.portChoose {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Pitfalls ─────────────────────────────────────── */
+.pitfallGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.pitfallCard {
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+}
+
+.pitfallCard:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.pitfallIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pitfallText {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Checklist ───────────────────────────────────── */
+.checklistBox {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: color 0.2s ease;
+}
+
+.checkItem:last-child {
+  border-bottom: none;
+}
+
+.checkItem:hover {
+  color: #fff;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-violet);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ── Bottom CTA Section ──────────────────────────── */
+.ctaSection {
+  text-align: center;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 24px;
+  padding: 60px 40px;
+}
+
+.ctaTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.ctaSubtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 36px;
+}
+
+.ctaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 1024px) {
+  .stepsRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .portGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.2rem;
+  }
+
+  .stepsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .budgetGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pitfallGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .checklistBox {
+    padding: 24px 20px;
+  }
+
+  .ctaSection {
+    padding: 40px 20px;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+}

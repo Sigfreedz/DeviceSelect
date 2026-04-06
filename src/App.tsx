@@ -5,6 +5,7 @@ import Features from './components/Features';
 import TopDevices from './pages/TopDevices';
 import Recommend from './pages/Recommend';
 import Compare from './pages/Compare';
+import Guides from './pages/Guides';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -18,6 +19,8 @@ function App() {
         setCurrentPage('recommend');
       } else if (path === '/compare') {
         setCurrentPage('compare');
+      } else if (path === '/guides') {
+        setCurrentPage('guides');
       } else {
         setCurrentPage('home');
       }
@@ -27,6 +30,10 @@ function App() {
     window.addEventListener('popstate', handleLocationChange);
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
+
+  if (currentPage === 'guides') {
+    return <Guides />;
+  }
 
   if (currentPage === 'top-devices') {
     return <TopDevices />;
