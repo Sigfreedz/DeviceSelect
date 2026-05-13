@@ -7,7 +7,7 @@ const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
 const missingConfigMessage =
   'Supabase environment variables are missing. Set REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY to enable Supabase.';
 
-type FallbackResult = { data: null; error: Error; count: null };
+type FallbackResult = { data: unknown[] | null; error: Error; count: number | null };
 type FallbackBuilder = Promise<FallbackResult> & {
   select: (...args: unknown[]) => FallbackBuilder;
   order: (...args: unknown[]) => FallbackBuilder;
@@ -24,7 +24,17 @@ type FallbackBuilder = Promise<FallbackResult> & {
   rpc: (...args: unknown[]) => FallbackBuilder;
 };
 
+let hasWarned = false;
+const warnOnMissingConfig = () => {
+  if (hasSupabaseConfig || hasWarned) return;
+  if (process.env.NODE_ENV !== 'test') {
+    console.warn(missingConfigMessage);
+  }
+  hasWarned = true;
+};
+
 const createFallbackBuilder = (): FallbackBuilder => {
+  warnOnMissingConfig();
   const result = Promise.resolve({
     data: null,
     error: new Error(missingConfigMessage),
@@ -74,10 +84,6 @@ const createFallbackClient = (): SupabaseClient => {
   });
   return proxy as unknown as SupabaseClient;
 };
-
-if (!hasSupabaseConfig) {
-  console.warn(missingConfigMessage);
-}
 
 export const supabase = hasSupabaseConfig
   ? createClient(supabaseUrl, supabaseAnonKey)
