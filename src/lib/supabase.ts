@@ -6,26 +6,27 @@ const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const missingConfigMessage =
   'Supabase environment variables are missing. Set REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY to enable Supabase.';
 
-const createFallbackBuilder = () => {
-  const result = Promise.resolve({ data: null, error: new Error(missingConfigMessage), count: null });
-  const builder: any = {
-    then: result.then.bind(result),
-    catch: result.catch.bind(result),
-    finally: result.finally.bind(result),
-    order: () => builder
-  };
+type FallbackResult = { data: null; error: Error; count: null };
+
+type FallbackBuilder = Promise<FallbackResult> & {
+  select: (...args: unknown[]) => FallbackBuilder;
+  order: (...args: unknown[]) => FallbackBuilder;
+};
+
+const createFallbackBuilder = (): FallbackBuilder => {
+  const builder = Promise.resolve({
+    data: null,
+    error: new Error(missingConfigMessage),
+    count: null
+  }) as FallbackBuilder;
+  builder.select = () => builder;
+  builder.order = () => builder;
   return builder;
 };
 
-const createFallbackClient = (): SupabaseClient => {
-  const builder = createFallbackBuilder();
-  return {
-    from: () => ({
-      select: () => builder,
-      order: () => builder
-    })
-  } as unknown as SupabaseClient;
-};
+const createFallbackClient = (): SupabaseClient => ({
+  from: () => createFallbackBuilder()
+} as unknown as SupabaseClient);
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn(missingConfigMessage);
