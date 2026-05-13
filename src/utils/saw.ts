@@ -5,20 +5,23 @@
 export interface Device {
   id: string;
   name: string;
-  price: number; // in PHP
-  ram: number; // in GB
-  storage: number; // in GB
+  brand: string;
+  price_php: number;
+  ram_gb: number;
+  storage_gb: number;
   storage_type: "SSD" | "HDD";
   battery_hrs: number;
   weight_kg: number;
-  has_dedicated_gpu: boolean;
-  os: "Windows" | "macOS" | "Linux" | "ChromeOS";
+  has_gpu: boolean;
+  os: "Windows" | "macOS" | "Linux";
   track_scores: {
     web_dev: number;
     networking: number;
     data: number;
     general: number;
   };
+  image_url?: string;
+  created_at?: string;
 }
 
 export interface Weights {
@@ -71,14 +74,14 @@ export function calculateSAWScore(
   const osPref = userPrefs?.preferred_os || "Windows";
 
   const scores = {
-    price: normalize.price(device.price, MAX_SPECS.price),
-    ram: normalize.ram(device.ram, MAX_SPECS.ram),
+    price: normalize.price(device.price_php, MAX_SPECS.price),
+    ram: normalize.ram(device.ram_gb, MAX_SPECS.ram),
     storage:
-      normalize.storage(device.storage, MAX_SPECS.storage) *
+      normalize.storage(device.storage_gb, MAX_SPECS.storage) *
       (device.storage_type === "SSD" ? 1.2 : 0.8),
     battery: normalize.battery(device.battery_hrs, MAX_SPECS.battery),
     weight: normalize.weight(device.weight_kg, MAX_SPECS.weight),
-    gpu: normalize.gpu(device.has_dedicated_gpu),
+    gpu: normalize.gpu(device.has_gpu),
     os: normalize.os(device.os, osPref),
   };
 
@@ -105,7 +108,7 @@ export function rankDevices(
   const rankedWithScores = devices
     .filter((d) => {
       // Apply hard filters first (user constraints)
-      if (userPrefs?.budget_max && d.price > userPrefs.budget_max) return false;
+      if (userPrefs?.budget_max && d.price_php > userPrefs.budget_max) return false;
       if (userPrefs?.track && d.track_scores[userPrefs.track] < 50) return false; // Minimum track fit threshold
       return true;
     })
@@ -126,26 +129,28 @@ export const runTests = () => {
     {
       id: "test1",
       name: "Budget Laptop",
-      price: 35000,
-      ram: 8,
-      storage: 256,
+      brand: "Generic",
+      price_php: 35000,
+      ram_gb: 8,
+      storage_gb: 256,
       storage_type: "SSD",
       battery_hrs: 6,
       weight_kg: 2.1,
-      has_dedicated_gpu: false,
+      has_gpu: false,
       os: "Windows",
       track_scores: { web_dev: 70, networking: 60, data: 50, general: 80 },
     },
     {
       id: "test2",
       name: "Performance Laptop",
-      price: 85000,
-      ram: 32,
-      storage: 1024,
+      brand: "Generic",
+      price_php: 85000,
+      ram_gb: 32,
+      storage_gb: 1024,
       storage_type: "SSD",
       battery_hrs: 10,
       weight_kg: 2.8,
-      has_dedicated_gpu: true,
+      has_gpu: true,
       os: "Windows",
       track_scores: { web_dev: 95, networking: 85, data: 90, general: 75 },
     },

@@ -1,10 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import deviceData from '../data/devices.json';
+import { supabase } from '../lib/supabase';
 import styles from '../styles/Compare.module.css';
 
+type RawDevice = Record<string, any>;
+
 interface Device {
-  id: number;
+  id: string;
   name: string;
   brand: string;
   specs: {
@@ -19,10 +22,67 @@ interface Device {
   badge: { text: string; type: string };
 }
 
-const Compare: React.FC = () => {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+const normalizeDevice = (device: RawDevice): Device => {
+  const price = device.price ?? device.price_php ?? 0;
+  const specs = device.specs ?? {
+    cpu: device.cpu ?? device.processor ?? 'Unknown CPU',
+    ram: device.ram_gb ?? device.ram ?? 0,
+    storage: device.storage_gb ?? device.storage ?? 0,
+    gpu: device.gpu ?? (typeof device.has_gpu === 'boolean' ? (device.has_gpu ? 'Dedicated GPU' : 'Integrated GPU') : 'Unknown GPU'),
+    display: device.display ?? 'Unknown'
+  };
 
-  const toggleDevice = (id: number) => {
+  return {
+    id: String(device.id ?? device.device_id ?? device.name ?? Math.random()),
+    name: device.name ?? 'Unknown Device',
+    brand: device.brand ?? 'Unknown',
+    specs: {
+      cpu: specs.cpu,
+      ram: Number(specs.ram ?? 0),
+      storage: Number(specs.storage ?? 0),
+      gpu: specs.gpu,
+      display: specs.display
+    },
+    price,
+    category: device.category ?? 'General',
+    badge: device.badge ?? { text: 'Best Value', type: 'value' }
+  };
+};
+
+const Compare: React.FC = () => {
+  const [devices, setDevices] = useState<RawDevice[]>(deviceData as RawDevice[]);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDevices = async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const { data, error } = await supabase.from('devices').select('*');
+        if (error) throw error;
+        if (isMounted && data && data.length > 0) {
+          setDevices(data as RawDevice[]);
+        }
+      } catch (error: any) {
+        if (isMounted) {
+          setLoadError(error?.message || 'Unable to load Supabase devices.');
+          setDevices(deviceData as RawDevice[]);
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    void fetchDevices();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const toggleDevice = (id: string) => {
     if (selectedIds.includes(id)) {
       setSelectedIds(selectedIds.filter(sid => sid !== id));
     } else if (selectedIds.length < 3) {
@@ -31,8 +91,10 @@ const Compare: React.FC = () => {
   };
 
   const selectedDevices = useMemo(() => {
-    return (deviceData as Device[]).filter(d => selectedIds.includes(d.id));
-  }, [selectedIds]);
+    return devices.map(normalizeDevice).filter(d => selectedIds.includes(d.id));
+  }, [devices, selectedIds]);
+
+  const allDevices = useMemo(() => devices.map(normalizeDevice), [devices]);
 
   // Find "best values" (e.g., lowest price, highest RAM)
   const bestValues = useMemo(() => {
@@ -52,12 +114,14 @@ const Compare: React.FC = () => {
           <header className={styles.header}>
             <h1 className={styles.title}>Compare Devices</h1>
             <p className={styles.subtitle}>Select up to 3 devices to compare side-by-side.</p>
+            {loading && <p className={styles.subtitle}>Loading devices from Supabase...</p>}
+            {loadError && <p className={styles.subtitle}>Using local data: {loadError}</p>}
           </header>
 
           <div className={styles.selectionArea}>
             <h3 className={styles.sectionTitle}>Available Devices</h3>
             <div className={styles.devicePicker}>
-              {(deviceData as Device[]).map(device => (
+              {allDevices.map(device => (
                 <button 
                   key={device.id} 
                   className={`${styles.pickerItem} ${selectedIds.includes(device.id) ? styles.selected : ''}`}

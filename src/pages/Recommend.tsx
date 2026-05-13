@@ -1,87 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
-import deviceData from '../data/devices.json';
-import { Device as SawDevice, rankDevices } from '../utils/saw';
+import { supabase } from '../lib/supabase';
+import { Device, rankDevices } from '../utils/saw';
 import styles from '../styles/Recommend.module.css';
 
-interface CatalogDevice {
-  id: number;
-  name: string;
-  brand: string;
-  type: string;
-  specs: {
-    cpu: string;
-    ram: number;
-    storage: number;
-    gpu: string;
-    display: string;
-  };
-  price: number;
-  category: string;
-  portability: string;
-  badge: { text: string; type: string };
-  scores: { [key: string]: number };
-}
-
-type TrackOption = 'web_dev' | 'networking' | 'data' | 'general';
+type TrackOption = keyof Device['track_scores'];
 
 const trackLabelMap: Record<TrackOption, string> = {
   web_dev: 'Web Development',
   networking: 'Networking',
   data: 'Data',
-  general: 'General',
+  general: 'General'
 };
 
-const parseStorageType = (details: string): 'SSD' | 'HDD' =>
-  /hdd/i.test(details) ? 'HDD' : 'SSD';
+const testConnection = async () => {
+  const { count, error } = await supabase
+    .from('devices')
+    .select('*', { count: 'exact', head: true });
 
-const hasDedicatedGpu = (gpu: string): boolean => /(rtx|gtx|rx|nvidia)/i.test(gpu);
-
-const inferOs = (device: CatalogDevice): SawDevice['os'] =>
-  /macbook/i.test(device.name) ? 'macOS' : 'Windows';
-
-const inferBatteryHours = (device: CatalogDevice): number => {
-  if (device.type === 'Desktop') return 1;
-  if (device.type === 'Tablet') return 11;
-  if (device.portability.toLowerCase().includes('light')) return 10;
-  if (device.portability.toLowerCase().includes('high performance')) return 6;
-  return 8;
-};
-
-const inferWeight = (device: CatalogDevice): number => {
-  if (device.type === 'Desktop') return 3.5;
-  if (device.type === 'Tablet') return 0.7;
-  if (device.portability.toLowerCase().includes('light')) return 1.3;
-  if (device.portability.toLowerCase().includes('high performance')) return 2.7;
-  return 2.1;
-};
-
-const toSawDevice = (device: CatalogDevice): SawDevice => {
-  const scoreValues = Object.values(device.scores);
-  const avgScore =
-    scoreValues.length > 0
-      ? scoreValues.reduce((sum, value) => sum + value, 0) / scoreValues.length
-      : 0;
-
-  return {
-    id: String(device.id),
-    name: device.name,
-    price: device.price,
-    ram: device.specs.ram,
-    storage: device.specs.storage,
-    storage_type: parseStorageType(`${device.specs.cpu} ${device.specs.gpu}`),
-    battery_hrs: inferBatteryHours(device),
-    weight_kg: inferWeight(device),
-    has_dedicated_gpu: hasDedicatedGpu(device.specs.gpu),
-    os: inferOs(device),
-    track_scores: {
-      web_dev: device.scores.web_dev ?? avgScore,
-      networking: device.scores.networking ?? avgScore,
-      data: device.scores.multimedia ?? avgScore,
-      general: avgScore,
-    },
-  };
+  if (error) {
+    alert(`Connection failed: ${error.message}`);
+  } else {
+    alert(`Connected! Found ${count} devices in database`);
+  }
 };
 
 const Recommend: React.FC = () => {
@@ -91,7 +33,50 @@ const Recommend: React.FC = () => {
     budget: 0,
     portability: ''
   });
-  const [recommendation, setRecommendation] = useState<CatalogDevice | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [recommendations, setRecommendations] = useState<Device[]>([]);
+
+  const recommendation = recommendations[0] || null;
+
+  const fetchDevices = async (): Promise<Device[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('devices')
+        .select('*')
+        .order('price_php', { ascending: true });
+
+      if (error) throw error;
+      return (data || []) as Device[];
+    } catch (error) {
+      console.error('Error fetching devices:', error);
+      return [];
+    }
+  };
+
+  const handleGetRecommendation = async (formData: {
+    budgetMax: number;
+    track: TrackOption;
+    osPreference?: string;
+    portability?: 'light' | 'medium' | 'heavy';
+  }) => {
+    setLoading(true);
+
+    const allDevices = await fetchDevices();
+    const ranked = rankDevices(allDevices, {
+      budget_max: formData.budgetMax,
+      track: formData.track,
+      preferred_os: formData.osPreference || 'Windows'
+    });
+
+    setRecommendations(ranked.slice(0, 5));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && window.location.search.includes('testConnection=true')) {
+      void testConnection();
+    }
+  }, []);
 
   const handleTrackSelect = (track: TrackOption) => {
     setSelections({ ...selections, track });
@@ -103,30 +88,28 @@ const Recommend: React.FC = () => {
     setStep(3);
   };
 
-  const handlePortabilitySelect = (portability: string) => {
+  const handlePortabilitySelect = async (portability: string) => {
     const finalSelections = { ...selections, portability };
     setSelections(finalSelections);
-    calculateRecommendation(finalSelections);
     setStep(4);
+
+    const selectedTrack: TrackOption = finalSelections.track === '' ? 'general' : finalSelections.track;
+    await handleGetRecommendation({
+      budgetMax: finalSelections.budget,
+      track: selectedTrack,
+      portability: portability === 'Lightweight' ? 'light' : portability === 'High Performance' ? 'heavy' : 'medium',
+      osPreference: 'Windows'
+    });
   };
 
-  const calculateRecommendation = (finalSelections: typeof selections) => {
-    const allDevices = deviceData as CatalogDevice[];
-    const sawDevices = allDevices.map(toSawDevice);
-    const ranked = rankDevices(sawDevices, {
-      budget_max: finalSelections.budget,
-      track: finalSelections.track || undefined,
-      preferred_os: 'Windows'
+  const restartQuiz = () => {
+    setSelections({
+      track: '',
+      budget: 0,
+      portability: ''
     });
-
-    if (ranked.length === 0) {
-      const sorted = [...allDevices].sort((a, b) => a.price - b.price);
-      setRecommendation(sorted[0]);
-      return;
-    }
-
-    const topRawDevice = allDevices.find(d => String(d.id) === ranked[0].id);
-    setRecommendation(topRawDevice || allDevices[0]);
+    setRecommendations([]);
+    setStep(1);
   };
 
   return (
@@ -188,7 +171,7 @@ const Recommend: React.FC = () => {
                   { label: 'Balanced (Daily driver)', value: 'Balanced', icon: '⚖️' },
                   { label: 'High Performance (Power user)', value: 'High Performance', icon: '🚀' }
                 ].map(p => (
-                  <button key={p.label} className={styles.optionBtn} onClick={() => handlePortabilitySelect(p.value)}>
+                  <button key={p.label} className={styles.optionBtn} onClick={() => { void handlePortabilitySelect(p.value); }}>
                     <span className={styles.optionIcon}>{p.icon}</span>
                     {p.label}
                   </button>
@@ -197,41 +180,52 @@ const Recommend: React.FC = () => {
             </div>
           )}
 
-          {step === 4 && recommendation && (
+          {step === 4 && (
             <div className={styles.resultContainer}>
-              <div className={styles.matchBadge}>98% Match Found</div>
               <h2 className={styles.resultTitle}>Your Perfect Academic Companion</h2>
 
-              <div className={styles.recommendationCard}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.recImage}>💻</div>
-                  <div className={styles.recBasicInfo}>
-                    <span className={styles.recBrand}>{recommendation.brand}</span>
-                    <h3 className={styles.recName}>{recommendation.name}</h3>
-                    <div className={styles.recBadge}>{recommendation.badge.text}</div>
+              {loading && <p>Loading recommendations from Supabase...</p>}
+
+              {!loading && recommendation && (
+                <div className={styles.recommendationCard}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.recImage}>💻</div>
+                    <div className={styles.recBasicInfo}>
+                      <span className={styles.recBrand}>{recommendation.brand}</span>
+                      <h3 className={styles.recName}>{recommendation.name}</h3>
+                    </div>
+                    <div className={styles.recPrice}>₱{recommendation.price_php.toLocaleString()}</div>
                   </div>
-                  <div className={styles.recPrice}>₱{recommendation.price.toLocaleString()}</div>
-                </div>
 
-                <div className={styles.recSpecs}>
-                  <div className={styles.specItem}><strong>CPU:</strong> {recommendation.specs.cpu}</div>
-                  <div className={styles.specItem}><strong>RAM:</strong> {recommendation.specs.ram}GB</div>
-                  <div className={styles.specItem}><strong>Storage:</strong> {recommendation.specs.storage}GB SSD</div>
-                  <div className={styles.specItem}><strong>Display:</strong> {recommendation.specs.display}</div>
-                  <div className={styles.specItem}><strong>GPU:</strong> {recommendation.specs.gpu}</div>
-                </div>
+                  <div className={styles.recSpecs}>
+                    <div className={styles.specItem}><strong>RAM:</strong> {recommendation.ram_gb}GB</div>
+                    <div className={styles.specItem}><strong>Storage:</strong> {recommendation.storage_gb}GB {recommendation.storage_type}</div>
+                    <div className={styles.specItem}><strong>Battery:</strong> {recommendation.battery_hrs} hrs</div>
+                    <div className={styles.specItem}><strong>Weight:</strong> {recommendation.weight_kg} kg</div>
+                    <div className={styles.specItem}><strong>GPU:</strong> {recommendation.has_gpu ? 'Dedicated GPU' : 'Integrated GPU'}</div>
+                    <div className={styles.specItem}><strong>OS:</strong> {recommendation.os}</div>
+                  </div>
 
-                <div className={styles.whyText}>
-                  <h4>Why this matches you:</h4>
-                  <p>Based on your <strong>{selections.track ? trackLabelMap[selections.track] : 'selected'}</strong> track, this device offers strong fit for required software. Its <strong>{recommendation.portability}</strong> build aligns with your portability preference.</p>
-                </div>
-                <ScoreBreakdown device={toSawDevice(recommendation)} />
+                  <div className={styles.whyText}>
+                    <h4>Why this matches you:</h4>
+                    <p>Based on your <strong>{selections.track ? trackLabelMap[selections.track] : 'selected'}</strong> track, this device fits your chosen budget and profile.</p>
+                  </div>
 
-                <div className={styles.actionGroup}>
-                  <button className={styles.primaryBtn}>Download Full Report</button>
-                  <button className={styles.secondaryBtn} onClick={() => setStep(1)}>Restart Quiz</button>
+                  <ScoreBreakdown device={recommendation} />
+
+                  <div className={styles.actionGroup}>
+                    <button className={styles.primaryBtn}>Download Full Report</button>
+                    <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {!loading && !recommendation && (
+                <div className={styles.wizardStep}>
+                  <p>No devices matched your filters. Try a higher budget or another track.</p>
+                  <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -3,9 +3,132 @@ import Navbar from '../components/Navbar';
 import FilterSidebar from '../components/FilterSidebar';
 import DeviceCard from '../components/DeviceCard';
 import deviceData from '../data/devices.json';
+import { supabase } from '../lib/supabase';
 import styles from '../styles/TopDevices.module.css';
 
+type RawDevice = Record<string, any>;
+
+type BadgeType = 'value' | 'durable' | 'programming' | 'networking' | 'performance';
+
+interface TopDevice {
+  id: number;
+  name: string;
+  brand: string;
+  specs: {
+    cpu: string;
+    ram: string;
+    storage: string;
+    gpu: string;
+  };
+  price: number;
+  category: string;
+  portability: string;
+  badge: { text: string; type: BadgeType };
+  priceRange: string;
+}
+
+const getCategoryFromTrack = (device: RawDevice): string => {
+  const scores = device.track_scores;
+  if (!scores) return 'Programming';
+
+  const entries = Object.entries(scores) as Array<[string, number]>;
+  const top = entries.sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  switch (top) {
+    case 'web_dev':
+      return 'Programming';
+    case 'networking':
+      return 'Networking';
+    case 'data':
+      return 'Data Science';
+    default:
+      return 'Programming';
+  }
+};
+
+const getPortabilityFromWeight = (device: RawDevice): string => {
+  const weight = device.weight_kg;
+  if (typeof weight !== 'number') return 'Balanced';
+  if (weight <= 1.4) return 'Lightweight';
+  if (weight <= 2.1) return 'Balanced';
+  return 'High Performance';
+};
+
+const getBadgeForCategory = (category: string): { text: string; type: BadgeType } => {
+  switch (category) {
+    case 'Programming':
+      return { text: 'Best for Programming', type: 'programming' } as const;
+    case 'Networking':
+      return { text: 'Best for Networking', type: 'networking' } as const;
+    case 'Cybersecurity':
+      return { text: 'Most Durable', type: 'durable' } as const;
+    case 'Multimedia':
+    case 'Data Science':
+      return { text: 'High Performance', type: 'performance' } as const;
+    default:
+      return { text: 'Best Value', type: 'value' } as const;
+  }
+};
+
+const formatPriceRange = (price: number) => `₱${price.toLocaleString()}`;
+
+const normalizeBadgeType = (value: unknown): BadgeType => {
+  switch (value) {
+    case 'value':
+    case 'durable':
+    case 'programming':
+    case 'networking':
+    case 'performance':
+      return value;
+    default:
+      return 'value';
+  }
+};
+
+const normalizeDevice = (device: RawDevice, fallbackId: number): TopDevice => {
+  const name = String(device.name ?? 'Unknown Device');
+  const brand = String(device.brand ?? 'Unknown');
+  const price = device.price ?? device.price_php ?? 0;
+  const category = device.category ?? getCategoryFromTrack(device);
+  const portability = device.portability ?? getPortabilityFromWeight(device);
+  const badge = device.badge
+    ? { text: device.badge.text ?? 'Best Value', type: normalizeBadgeType(device.badge.type) }
+    : getBadgeForCategory(category);
+  const rawId = device.id ?? device.device_id ?? fallbackId;
+  const id = typeof rawId === 'number' ? rawId : Number(rawId) || fallbackId;
+
+  const specs = device.specs ?? {
+    cpu: device.cpu ?? device.processor ?? 'Unknown CPU',
+    ram: device.ram_gb ?? device.ram ?? 0,
+    storage: device.storage_gb ?? device.storage ?? 0,
+    gpu: device.gpu ?? (typeof device.has_gpu === 'boolean' ? (device.has_gpu ? 'Dedicated GPU' : 'Integrated GPU') : 'Unknown GPU')
+  };
+
+  const storageLabel = specs.storage ? `${specs.storage}GB${device.storage_type ? ` ${device.storage_type}` : ' SSD'}` : 'Unknown Storage';
+  const ramLabel = specs.ram ? `${specs.ram}GB` : 'Unknown RAM';
+
+  return {
+    id,
+    name,
+    brand,
+    price,
+    category,
+    portability,
+    badge,
+    specs: {
+      cpu: specs.cpu,
+      ram: ramLabel,
+      storage: storageLabel,
+      gpu: specs.gpu
+    },
+    priceRange: device.priceRange ?? formatPriceRange(price)
+  };
+};
+
 const TopDevices: React.FC = () => {
+  const [devices, setDevices] = useState<RawDevice[]>(deviceData as RawDevice[]);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     budget: 'all',
     specializations: [] as string[],
@@ -22,8 +145,35 @@ const TopDevices: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDevices = async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const { data, error } = await supabase.from('devices').select('*');
+        if (error) throw error;
+        if (isMounted && data && data.length > 0) {
+          setDevices(data as RawDevice[]);
+        }
+      } catch (error: any) {
+        if (isMounted) {
+          setLoadError(error?.message || 'Unable to load Supabase devices.');
+          setDevices(deviceData as RawDevice[]);
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    void fetchDevices();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredDevices = useMemo(() => {
-    return (deviceData as any[]).filter(device => {
+    return devices.map((device, index) => normalizeDevice(device, index + 1)).filter(device => {
       // 0. Search Filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -53,16 +203,8 @@ const TopDevices: React.FC = () => {
       }
 
       return true;
-    }).map(d => ({
-      ...d,
-      specs: {
-        cpu: d.specs.cpu,
-        ram: `${d.specs.ram}GB`,
-        storage: `${d.specs.storage}GB SSD`,
-        gpu: d.specs.gpu
-      }
-    }));
-  }, [filters, searchQuery]);
+    });
+  }, [devices, filters, searchQuery]);
 
   const handleReset = () => {
     setFilters({ budget: 'all', specializations: [], portability: 'all' });
@@ -83,6 +225,8 @@ const TopDevices: React.FC = () => {
               </div>
             )}
           </div>
+          {loading && <p className={styles.subtitle}>Loading devices from Supabase...</p>}
+          {loadError && <p className={styles.subtitle}>Using local data: {loadError}</p>}
           <p className={styles.subtitle}>
             Showing {filteredDevices.length} hand-picked laptops for your academic journey.
           </p>

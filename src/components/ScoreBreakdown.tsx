@@ -4,14 +4,14 @@ import { calculateSAWScore, Device, MOCK_WEIGHTS, Weights } from "../utils/saw";
 export function ScoreBreakdown({ device }: { device: Device }) {
   const weights = MOCK_WEIGHTS;
   const scores = {
-    price: (1 - device.price / 150000).toFixed(2),
-    ram: (device.ram / 32).toFixed(2),
+    price: (1 - device.price_php / 150000).toFixed(2),
+    ram: (device.ram_gb / 32).toFixed(2),
     storage: (
-      (device.storage / 2048) * (device.storage_type === "SSD" ? 1.2 : 0.8)
+      (device.storage_gb / 2048) * (device.storage_type === "SSD" ? 1.2 : 0.8)
     ).toFixed(2),
     battery: (device.battery_hrs / 15).toFixed(2),
     weight: (1 - device.weight_kg / 3.5).toFixed(2),
-    gpu: device.has_dedicated_gpu ? "1.00" : "0.00",
+    gpu: device.has_gpu ? "1.00" : "0.00",
     os: device.os === "Windows" ? "1.00" : "0.50",
   };
 
