@@ -1,36 +1,84 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
-import deviceData from '../data/devices.json';
+import { ScoreBreakdown } from '../components/ScoreBreakdown';
+import { supabase } from '../lib/supabase';
+import { Device, rankDevices } from '../utils/saw';
 import styles from '../styles/Recommend.module.css';
 
-interface Device {
-  id: number;
-  name: string;
-  brand: string;
-  specs: {
-    cpu: string;
-    ram: number;
-    storage: number;
-    gpu: string;
-    display: string;
-  };
-  price: number;
-  category: string;
-  portability: string;
-  badge: { text: string; type: string };
-  scores: { [key: string]: number };
-}
+type TrackOption = keyof Device['track_scores'];
+
+const trackLabelMap: Record<TrackOption, string> = {
+  web_dev: 'Web Development',
+  networking: 'Networking',
+  data: 'Data',
+  general: 'General'
+};
+
+const testConnection = async () => {
+  const { count, error } = await supabase
+    .from('devices')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    alert(`Connection failed: ${error.message}`);
+  } else {
+    alert(`Connected! Found ${count} devices in database`);
+  }
+};
 
 const Recommend: React.FC = () => {
   const [step, setStep] = useState(1);
   const [selections, setSelections] = useState({
-    track: '',
+    track: '' as TrackOption | '',
     budget: 0,
     portability: ''
   });
-  const [recommendation, setRecommendation] = useState<Device | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [recommendations, setRecommendations] = useState<Device[]>([]);
 
-  const handleTrackSelect = (track: string) => {
+  const recommendation = recommendations[0] || null;
+
+  const fetchDevices = async (): Promise<Device[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('devices')
+        .select('*')
+        .order('price_php', { ascending: true });
+
+      if (error) throw error;
+      return (data || []) as Device[];
+    } catch (error) {
+      console.error('Error fetching devices:', error);
+      return [];
+    }
+  };
+
+  const handleGetRecommendation = async (formData: {
+    budgetMax: number;
+    track: TrackOption;
+    osPreference?: string;
+    portability?: 'light' | 'medium' | 'heavy';
+  }) => {
+    setLoading(true);
+
+    const allDevices = await fetchDevices();
+    const ranked = rankDevices(allDevices, {
+      budget_max: formData.budgetMax,
+      track: formData.track,
+      preferred_os: formData.osPreference || 'Windows'
+    });
+
+    setRecommendations(ranked.slice(0, 5));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && window.location.search.includes('testConnection=true')) {
+      void testConnection();
+    }
+  }, []);
+
+  const handleTrackSelect = (track: TrackOption) => {
     setSelections({ ...selections, track });
     setStep(2);
   };
@@ -40,32 +88,28 @@ const Recommend: React.FC = () => {
     setStep(3);
   };
 
-  const handlePortabilitySelect = (portability: string) => {
+  const handlePortabilitySelect = async (portability: string) => {
     const finalSelections = { ...selections, portability };
     setSelections(finalSelections);
-    calculateRecommendation(finalSelections);
     setStep(4);
+
+    const selectedTrack: TrackOption = finalSelections.track === '' ? 'general' : finalSelections.track;
+    await handleGetRecommendation({
+      budgetMax: finalSelections.budget,
+      track: selectedTrack,
+      portability: portability === 'Lightweight' ? 'light' : portability === 'High Performance' ? 'heavy' : 'medium',
+      osPreference: 'Windows'
+    });
   };
 
-  const calculateRecommendation = (finalSelections: typeof selections) => {
-    const filtered = (deviceData as Device[]).filter(d => d.price <= finalSelections.budget);
-    
-    if (filtered.length === 0) {
-      // Fallback to closest budget if none found
-      const sorted = (deviceData as Device[]).sort((a, b) => a.price - b.price);
-      setRecommendation(sorted[0]);
-      return;
-    }
-
-    // Quantitative Scoring: Sort by track score
-    const trackKey = finalSelections.track.toLowerCase().replace(' ', '_');
-    const sorted = filtered.sort((a, b) => {
-      const scoreA = a.scores[trackKey] || 0;
-      const scoreB = b.scores[trackKey] || 0;
-      return scoreB - scoreA;
+  const restartQuiz = () => {
+    setSelections({
+      track: '',
+      budget: 0,
+      portability: ''
     });
-
-    setRecommendation(sorted[0]);
+    setRecommendations([]);
+    setStep(1);
   };
 
   return (
@@ -84,10 +128,15 @@ const Recommend: React.FC = () => {
             <div className={styles.wizardStep}>
               <h2 className={styles.question}>What is your BSIT Specialization?</h2>
               <div className={styles.optionsGrid}>
-                {['Web Development', 'Networking', 'Multimedia', 'Cybersecurity'].map(t => (
-                  <button key={t} className={styles.optionBtn} onClick={() => handleTrackSelect(t)}>
-                    <span className={styles.optionIcon}>{t === 'Web Development' ? '🌐' : t === 'Networking' ? '📡' : t === 'Multimedia' ? '🎨' : '🛡️'}</span>
-                    {t}
+                {([
+                  { key: 'web_dev', label: 'Web Development', icon: '🌐' },
+                  { key: 'networking', label: 'Networking', icon: '📡' },
+                  { key: 'data', label: 'Data', icon: '📊' },
+                  { key: 'general', label: 'General', icon: '💼' }
+                ] as const).map(t => (
+                  <button key={t.key} className={styles.optionBtn} onClick={() => handleTrackSelect(t.key)}>
+                    <span className={styles.optionIcon}>{t.icon}</span>
+                    {t.label}
                   </button>
                 ))}
               </div>
@@ -122,7 +171,7 @@ const Recommend: React.FC = () => {
                   { label: 'Balanced (Daily driver)', value: 'Balanced', icon: '⚖️' },
                   { label: 'High Performance (Power user)', value: 'High Performance', icon: '🚀' }
                 ].map(p => (
-                  <button key={p.label} className={styles.optionBtn} onClick={() => handlePortabilitySelect(p.value)}>
+                  <button key={p.label} className={styles.optionBtn} onClick={() => { void handlePortabilitySelect(p.value); }}>
                     <span className={styles.optionIcon}>{p.icon}</span>
                     {p.label}
                   </button>
@@ -131,40 +180,52 @@ const Recommend: React.FC = () => {
             </div>
           )}
 
-          {step === 4 && recommendation && (
+          {step === 4 && (
             <div className={styles.resultContainer}>
-              <div className={styles.matchBadge}>98% Match Found</div>
               <h2 className={styles.resultTitle}>Your Perfect Academic Companion</h2>
-              
-              <div className={styles.recommendationCard}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.recImage}>💻</div>
-                  <div className={styles.recBasicInfo}>
-                    <span className={styles.recBrand}>{recommendation.brand}</span>
-                    <h3 className={styles.recName}>{recommendation.name}</h3>
-                    <div className={styles.recBadge}>{recommendation.badge.text}</div>
+
+              {loading && <p>Loading recommendations from Supabase...</p>}
+
+              {!loading && recommendation && (
+                <div className={styles.recommendationCard}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.recImage}>💻</div>
+                    <div className={styles.recBasicInfo}>
+                      <span className={styles.recBrand}>{recommendation.brand}</span>
+                      <h3 className={styles.recName}>{recommendation.name}</h3>
+                    </div>
+                    <div className={styles.recPrice}>₱{recommendation.price_php.toLocaleString()}</div>
                   </div>
-                  <div className={styles.recPrice}>₱{recommendation.price.toLocaleString()}</div>
-                </div>
 
-                <div className={styles.recSpecs}>
-                  <div className={styles.specItem}><strong>CPU:</strong> {recommendation.specs.cpu}</div>
-                  <div className={styles.specItem}><strong>RAM:</strong> {recommendation.specs.ram}GB</div>
-                  <div className={styles.specItem}><strong>Storage:</strong> {recommendation.specs.storage}GB SSD</div>
-                  <div className={styles.specItem}><strong>Display:</strong> {recommendation.specs.display}</div>
-                  <div className={styles.specItem}><strong>GPU:</strong> {recommendation.specs.gpu}</div>
-                </div>
+                  <div className={styles.recSpecs}>
+                    <div className={styles.specItem}><strong>RAM:</strong> {recommendation.ram_gb}GB</div>
+                    <div className={styles.specItem}><strong>Storage:</strong> {recommendation.storage_gb}GB {recommendation.storage_type}</div>
+                    <div className={styles.specItem}><strong>Battery:</strong> {recommendation.battery_hrs} hrs</div>
+                    <div className={styles.specItem}><strong>Weight:</strong> {recommendation.weight_kg} kg</div>
+                    <div className={styles.specItem}><strong>GPU:</strong> {recommendation.has_gpu ? 'Dedicated GPU' : 'Integrated GPU'}</div>
+                    <div className={styles.specItem}><strong>OS:</strong> {recommendation.os}</div>
+                  </div>
 
-                <div className={styles.whyText}>
-                  <h4>Why this matches you:</h4>
-                  <p>Based on your <strong>{selections.track}</strong> track, this device offers optimal performance for required software. Its <strong>{recommendation.portability}</strong> build aligns with your portability preference.</p>
-                </div>
+                  <div className={styles.whyText}>
+                    <h4>Why this matches you:</h4>
+                    <p>Based on your <strong>{selections.track ? trackLabelMap[selections.track] : 'selected'}</strong> track, this device fits your chosen budget and profile.</p>
+                  </div>
 
-                <div className={styles.actionGroup}>
-                  <button className={styles.primaryBtn}>Download Full Report</button>
-                  <button className={styles.secondaryBtn} onClick={() => setStep(1)}>Restart Quiz</button>
+                  <ScoreBreakdown device={recommendation} />
+
+                  <div className={styles.actionGroup}>
+                    <button className={styles.primaryBtn}>Download Full Report</button>
+                    <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {!loading && !recommendation && (
+                <div className={styles.wizardStep}>
+                  <p>No devices matched your filters. Try a higher budget or another track.</p>
+                  <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
+                </div>
+              )}
             </div>
           )}
         </div>
