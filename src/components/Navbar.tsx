@@ -11,10 +11,6 @@ const Navbar: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
   const currentPath = window.location.pathname;
 
   return (
@@ -41,11 +37,11 @@ const Navbar: React.FC = () => {
             <li><a href="/recommend" onClick={navigate('/recommend')} className={currentPath === '/recommend' ? styles.active : ''}>Recommend</a></li>
             <li><a href="/compare" onClick={navigate('/compare')} className={currentPath === '/compare' ? styles.active : ''}>Compare</a></li>
             <li><a href="/guides" onClick={navigate('/guides')} className={currentPath === '/guides' ? styles.active : ''}>Guides</a></li>
-            <li><a href="/standards" onClick={closeMobileMenu}>Standards</a></li>
-            <li><a href="/about" onClick={closeMobileMenu}>About</a></li>
+            <li><a href="/standards" onClick={navigate('/standards')}>Standards</a></li>
+            <li><a href="/about" onClick={navigate('/about')}>About</a></li>
           </ul>
           <div className={styles.navAuth}>
-            <button className={styles.loginBtn} type="button" onClick={closeMobileMenu}>Login</button>
+            <button className={styles.loginBtn} type="button" onClick={() => setIsMobileMenuOpen(false)}>Login</button>
           </div>
         </div>
       </div>
