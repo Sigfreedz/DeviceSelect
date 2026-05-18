@@ -169,16 +169,26 @@ const Recommend: React.FC = () => {
         return;
       }
 
+      const { data: existingSave, error: existingSaveError } = await supabase
+        .from('saved_devices')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('device_id', recommendation.id)
+        .maybeSingle();
+
+      if (existingSaveError) throw existingSaveError;
+
+      if (existingSave) {
+        setSaveMessage('This device is already in your saved list.');
+        return;
+      }
+
       const { error: saveError } = await supabase.from('saved_devices').insert({
         user_id: user.id,
         device_id: recommendation.id
       });
 
       if (saveError) {
-        if ((saveError as any).code === '23505') {
-          setSaveMessage('This device is already in your saved list.');
-          return;
-        }
         throw saveError;
       }
 
