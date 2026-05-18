@@ -1,0 +1,397 @@
+/* FacultyDashboard Module Styles */
+
+.section {
+  margin-bottom: 32px;
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.sectionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.sectionDescription {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* Metrics Grid */
+.metricsGrid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.metricCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 16px rgba(15, 7, 33, 0.25);
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.metricTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.metricIcon {
+  font-size: 1.4rem;
+}
+
+/* Device List */
+.deviceList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deviceItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(139, 92, 246, 0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.25);
+  color: #c4b5fd;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.deviceName {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saveCount {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Rating Display */
+.ratingDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ratingValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+  font-size: 1.4rem;
+}
+
+.star {
+  color: #fbbf24;
+}
+
+.starHalf {
+  color: #fbbf24;
+  opacity: 0.7;
+}
+
+.starEmpty {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.ratingCount {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Interaction Stats */
+.interactionStats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+}
+
+.interactionValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.interactionLabel {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.interactionNote {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+/* Insight Card */
+.insightCard {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.05));
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.insightText {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.insightText strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Empty State */
+.emptyState {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+  font-size: 0.95rem;
+}
+
+/* Methodology Cards Grid */
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 150px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cardMeta {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.16);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.cardDescription {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+/* Note Box */
+.note {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.note strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Loading Skeleton */
+.loadingGrid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.skeletonCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeletonLine {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  margin-bottom: 10px;
+}
+
+.skeletonLineShort {
+  height: 14px;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  margin-bottom: 10px;
+}
+
+/* Error State */
+.errorState {
+  padding: 24px;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+.errorState p {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.errorSubtext {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .section {
+    padding: 18px;
+  }
+
+  .sectionTitle {
+    font-size: 1.2rem;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricCard {
+    padding: 16px;
+  }
+
+  .ratingValue,
+  .interactionValue {
+    font-size: 2rem;
+  }
+
+  .deviceItem {
+    padding: 8px 10px;
+  }
+
+  .deviceName {
+    font-size: 0.9rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 140px;
+  }
+}
+
+/* Touch Targets */
+@media (pointer: coarse) {
+  .deviceItem {
+    min-height: 44px;
+  }
+
+  .card {
+    min-height: 160px;
+  }
+}
