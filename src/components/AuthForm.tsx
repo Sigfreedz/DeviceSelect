@@ -63,7 +63,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', onClose }) =
       )}
       <div className={styles.header}>
         <h2>{title}</h2>
-        <p>{isSignup ? 'Join DeviceLabs to unlock more tools.' : 'Sign in to access your personalized dashboard.'}</p>
+        <p>{isSignup ? 'Join IT DeviceSelect to unlock more tools.' : 'Sign in to access your personalized dashboard.'}</p>
       </div>
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
@@ -113,7 +113,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', onClose }) =
         </button>
       </form>
       <div className={styles.toggleRow}>
-        <span>{isSignup ? 'Already have an account?' : 'New to DeviceLabs?'}</span>
+        <span>{isSignup ? 'Already have an account?' : 'New to IT DeviceSelect?'}</span>
         <button
           type="button"
           className={styles.toggleButton}
