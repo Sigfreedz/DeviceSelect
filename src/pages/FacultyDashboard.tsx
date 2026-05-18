@@ -15,7 +15,7 @@ interface TopDevice {
   storageType: string | null;
 }
 
-const MIN_PROGRESS_BAR_WIDTH_PERCENT = 12;
+const MIN_VISIBLE_PROGRESS_BAR_WIDTH_PERCENT = 12;
 
 const isInteractionType = (value: unknown): value is InteractionType => {
   return value === 'recommendation_view' || value === 'comparison_click';
@@ -225,7 +225,7 @@ const FacultyDashboard: React.FC = () => {
                           className={styles.progressBar}
                           style={{
                             width: `${Math.max(
-                              MIN_PROGRESS_BAR_WIDTH_PERCENT,
+                              MIN_VISIBLE_PROGRESS_BAR_WIDTH_PERCENT,
                               Math.round((device.saveCount / Math.max(topSaveCount, 1)) * 100)
                             )}%`
                           }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from './AuthForm';
 import styles from '../styles/Navbar.module.css';
@@ -10,6 +10,7 @@ const Navbar: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [isPortalMenuOpen, setIsPortalMenuOpen] = useState(false);
+  const portalMenuRef = useRef<HTMLDivElement | null>(null);
   const { user, profile, isLoading, signOut } = useAuth();
 
   const navigate = (path: string) => (e: React.MouseEvent<HTMLElement>) => {
@@ -40,6 +41,27 @@ const Navbar: React.FC = () => {
   const currentPath = window.location.pathname;
   const hasFacultyAccess = profile?.role === 'faculty' || profile?.role === 'admin';
   const hasAdminAccess = profile?.role === 'admin';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!portalMenuRef.current) return;
+      if (portalMenuRef.current.contains(event.target as Node)) return;
+      setIsPortalMenuOpen(false);
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsPortalMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   return (
     <>
@@ -73,7 +95,7 @@ const Navbar: React.FC = () => {
               {user ? (
                 <>
                   {hasFacultyAccess && (
-                    <div className={styles.portalMenuWrapper}>
+                    <div className={styles.portalMenuWrapper} ref={portalMenuRef}>
                       <button
                         type="button"
                         className={styles.portalMenuButton}
