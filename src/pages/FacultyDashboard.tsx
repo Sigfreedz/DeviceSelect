@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
+import { fetchInteractionEvents } from '../utils/interactionTracking';
 import styles from './FacultyDashboard.module.css';
 
 type InteractionType = 'recommendation_view' | 'comparison_click';
@@ -25,16 +26,6 @@ const isInteractionType = (value: unknown): value is InteractionType => {
   return value === 'recommendation_view' || value === 'comparison_click';
 };
 
-const getInteractionType = (row: Record<string, unknown>): InteractionType | null => {
-  const candidates = [row.event_type, row.interaction_type, row.action_type];
-  for (const candidate of candidates) {
-    if (isInteractionType(candidate)) {
-      return candidate;
-    }
-  }
-  return null;
-};
-
 const FacultyDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,15 +42,14 @@ const FacultyDashboard: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      const [savedDevicesResult, feedbackResult, interactionsResult] = await Promise.all([
+      const [savedDevicesResult, feedbackResult, interactionEvents] = await Promise.all([
         supabase.from('saved_devices').select('device_id'),
         supabase.from('feedback_responses').select('rating'),
-        supabase.from('interaction_logs').select('event_type, interaction_type, action_type')
+        fetchInteractionEvents()
       ]);
 
       if (savedDevicesResult.error) throw savedDevicesResult.error;
       if (feedbackResult.error) throw feedbackResult.error;
-      if (interactionsResult.error) throw interactionsResult.error;
 
       const savedRows = (savedDevicesResult.data ?? []) as Array<{ device_id: string | null }>;
       const deviceCountMap = savedRows.reduce<Map<string, number>>((accumulator, row) => {
@@ -123,12 +113,10 @@ const FacultyDashboard: React.FC = () => {
           : null
       );
 
-      const interactions = (interactionsResult.data ?? []) as Array<Record<string, unknown>>;
-      const normalizedCounts = interactions.reduce<Record<InteractionType, number>>(
-        (accumulator, row) => {
-          const interactionType = getInteractionType(row);
-          if (!interactionType) return accumulator;
-          accumulator[interactionType] += 1;
+      const normalizedCounts = interactionEvents.reduce<Record<InteractionType, number>>(
+        (accumulator, interactionEvent) => {
+          if (!isInteractionType(interactionEvent.event_type)) return accumulator;
+          accumulator[interactionEvent.event_type] += 1;
           return accumulator;
         },
         {
