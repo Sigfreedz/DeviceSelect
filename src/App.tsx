@@ -66,6 +66,8 @@ const AccessDenied: React.FC = () => {
   const { profile } = useAuth();
   const role = isRole(profile?.role) ? profile?.role : null;
   const destination = role ? roleLanding[role] : '/';
+  const buttonLabel = role ? 'Go to your portal' : 'Return to home';
+  const ariaLabel = role ? 'Go to your role dashboard' : 'Return to the home page';
 
   const handleNavigate = () => {
     window.history.pushState({}, '', destination);
@@ -85,8 +87,13 @@ const AccessDenied: React.FC = () => {
                 : 'Your profile is still pending a valid role assignment.'}
             </p>
           </div>
-          <button className={styles.actionButton} type="button" onClick={handleNavigate}>
-            Go to your portal
+          <button
+            className={styles.actionButton}
+            type="button"
+            onClick={handleNavigate}
+            aria-label={ariaLabel}
+          >
+            {buttonLabel}
           </button>
         </div>
       </main>
