@@ -201,7 +201,7 @@ const Dashboard: React.FC = () => {
     event.preventDefault();
     if (!user?.id) return;
 
-    if (rating === 0 || rating < 1 || rating > 5) {
+    if (rating < 1 || rating > 5) {
       setFeedbackMessage('Please choose a rating from 1 to 5 before submitting.');
       return;
     }

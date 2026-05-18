@@ -45,8 +45,8 @@ const Recommend: React.FC = () => {
   const recommendation = recommendations[0] || null;
 
   const logInteraction = async (eventType: 'recommendation_view' | 'comparison_click', deviceId?: string) => {
-    const isLogged = await recordInteractionEvent(user?.id, eventType, deviceId);
-    if (!isLogged) {
+    const result = await recordInteractionEvent(user?.id, eventType, deviceId);
+    if (!result.ok && result.reason !== 'missing_user') {
       console.error('Unable to log interaction.');
     }
   };
@@ -145,7 +145,7 @@ const Recommend: React.FC = () => {
     }
 
     if (!isUuid(recommendation.id)) {
-      setSaveMessage('This device cannot be saved at this time.');
+      setSaveMessage('This recommendation has an invalid device identifier and cannot be saved.');
       return;
     }
 

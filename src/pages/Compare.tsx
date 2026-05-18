@@ -59,8 +59,8 @@ const Compare: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const logComparisonClick = async (deviceId: string) => {
-    const isLogged = await recordInteractionEvent(user?.id, 'comparison_click', deviceId);
-    if (!isLogged) {
+    const result = await recordInteractionEvent(user?.id, 'comparison_click', deviceId);
+    if (!result.ok && result.reason !== 'missing_user') {
       console.error('Unable to log comparison click.');
     }
   };

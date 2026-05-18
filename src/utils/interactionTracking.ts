@@ -9,6 +9,11 @@ export interface InteractionEvent {
   created_at: string;
 }
 
+interface RecordInteractionResult {
+  ok: boolean;
+  reason: 'missing_user' | 'insert_failed' | null;
+}
+
 type ColumnCandidate = 'event_type' | 'interaction_type' | 'action_type';
 
 const eventColumns: ColumnCandidate[] = ['event_type', 'interaction_type', 'action_type'];
@@ -61,10 +66,19 @@ export const recordInteractionEvent = async (
   userId: string | undefined,
   eventType: InteractionEventType,
   deviceId?: string
-) => {
-  if (!userId) return false;
+): Promise<RecordInteractionResult> => {
+  if (!userId) {
+    return {
+      ok: false,
+      reason: 'missing_user'
+    };
+  }
 
   const safeDeviceId = deviceId && isUuid(deviceId) ? deviceId : null;
+  const isDeviceIdRelatedError = (message: string) => {
+    const normalizedMessage = message.toLowerCase();
+    return normalizedMessage.includes('device_id') || normalizedMessage.includes('foreign key');
+  };
 
   for (const column of eventColumns) {
     const payload: Record<string, unknown> = {
@@ -79,10 +93,13 @@ export const recordInteractionEvent = async (
     const { error } = await supabase.from('interaction_logs').insert(payload);
 
     if (!error) {
-      return true;
+      return {
+        ok: true,
+        reason: null
+      };
     }
 
-    if (safeDeviceId) {
+    if (safeDeviceId && isDeviceIdRelatedError(error.message ?? '')) {
       const fallbackPayload = {
         user_id: userId,
         [column]: eventType
@@ -90,10 +107,16 @@ export const recordInteractionEvent = async (
       const fallbackResult = await supabase.from('interaction_logs').insert(fallbackPayload);
 
       if (!fallbackResult.error) {
-        return true;
+        return {
+          ok: true,
+          reason: null
+        };
       }
     }
   }
 
-  return false;
+  return {
+    ok: false,
+    reason: 'insert_failed'
+  };
 };
