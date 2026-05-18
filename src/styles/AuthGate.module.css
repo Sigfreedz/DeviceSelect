@@ -25,6 +25,19 @@
   font-size: 1rem;
 }
 
+.actionButton {
+  background: var(--accent);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.actionButton:hover {
+  background: var(--accent-hover);
+}
+
 .loading {
   flex: 1;
   display: flex;

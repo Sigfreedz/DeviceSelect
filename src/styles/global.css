@@ -1,12 +1,21 @@
 :root {
-  --primary-bg: #0f172a;
-  --secondary-bg: #1e293b;
-  --accent-violet: #8b5cf6;
-  --accent-violet-hover: #7c3aed;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --gradient-main: linear-gradient(135deg, #0f172a 0%, #4c1d95 100%);
+  --bg-primary: #0f0721;
+  --bg-gradient: linear-gradient(135deg, #1a0b2e 0%, #2d1b69 100%);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #a5a0c7;
+  --accent: #8b5cf6;
+  --accent-hover: #7c3aed;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --primary-bg: var(--bg-primary);
+  --secondary-bg: #1a0b2e;
+  --accent-violet: var(--accent);
+  --accent-violet-hover: var(--accent-hover);
+  --glass-bg: var(--card-bg);
+  --gradient-main: var(--bg-gradient);
   --nav-height: 70px;
 }
 
@@ -41,7 +50,7 @@ main {
 }
 
 footer {
-  background-color: #020617;
+  background-color: var(--bg-primary);
   padding: 40px 20px;
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
