@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Faculty from './pages/Faculty';
 import FacultyMethodology from './pages/FacultyMethodology';
 import FacultyReports from './pages/FacultyReports';
+import FacultyDashboard from './pages/FacultyDashboard';
 import Admin from './pages/Admin';
 import AdminDevices from './pages/AdminDevices';
 import AdminAnalytics from './pages/AdminAnalytics';
@@ -175,8 +176,8 @@ const AppContent: React.FC = () => {
 
   if (normalizedPath === '/faculty') {
     return (
-      <ProtectedRoute allowedRoles={['faculty']}>
-        <Faculty />
+      <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+        <FacultyDashboard />
       </ProtectedRoute>
     );
   }
