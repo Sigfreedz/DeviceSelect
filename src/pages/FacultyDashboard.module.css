@@ -1,0 +1,145 @@
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 18px;
+  min-height: 180px;
+  box-shadow: 0 12px 24px rgba(15, 7, 33, 0.25);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cardTitle {
+  color: #ffffff;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.cardMeta {
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.metricValue {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.mutedText {
+  color: #a5a0c7;
+  line-height: 1.6;
+}
+
+.metricList {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.metricItem {
+  display: grid;
+  gap: 8px;
+}
+
+.metricTitle {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.progressWrap {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progressBar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.methodologySection {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.stateCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 18px;
+  color: #a5a0c7;
+  display: grid;
+  gap: 12px;
+}
+
+.actionButton {
+  min-height: 44px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: rgba(139, 92, 246, 0.22);
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  color: #ffffff;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.skeletonCard {
+  display: grid;
+  gap: 12px;
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeletonLineWide {
+  width: 75%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
