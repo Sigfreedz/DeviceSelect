@@ -110,7 +110,7 @@ const Navbar: React.FC = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Authentication"
-            onClick={event => event.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <AuthForm initialMode={authMode} onClose={closeAuth} />
           </div>
