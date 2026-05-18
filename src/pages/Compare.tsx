@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 import deviceData from '../data/devices.json';
 import { supabase } from '../lib/supabase';
 import styles from '../styles/Compare.module.css';
@@ -50,10 +51,26 @@ const normalizeDevice = (device: RawDevice): Device => {
 };
 
 const Compare: React.FC = () => {
+  const { user } = useAuth();
   const [devices, setDevices] = useState<RawDevice[]>(deviceData as RawDevice[]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const isUuid = (value: string) =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
+  const logComparisonClick = async (deviceId: string) => {
+    if (!user?.id) return;
+    const safeDeviceId = isUuid(deviceId) ? deviceId : null;
+    const { error } = await supabase.from('interaction_logs').insert({
+      user_id: user.id,
+      event_type: 'comparison_click',
+      device_id: safeDeviceId
+    });
+    if (error) {
+      console.error('Unable to log comparison click:', error.message);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -87,6 +104,7 @@ const Compare: React.FC = () => {
       setSelectedIds(selectedIds.filter(sid => sid !== id));
     } else if (selectedIds.length < 3) {
       setSelectedIds([...selectedIds, id]);
+      void logComparisonClick(id);
     }
   };
 
