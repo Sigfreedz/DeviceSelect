@@ -142,7 +142,7 @@ const FacultyDashboard: React.FC = () => {
 
   useEffect(() => {
     void loadFacultyDashboard();
-  }, []);
+  }, [loadFacultyDashboard]);
 
   const topSaveCount = topDevices[0]?.saveCount ?? 0;
   const primaryInsight = useMemo(() => {
