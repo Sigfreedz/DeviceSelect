@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfile = useCallback(async (userId?: string | null) => {
     if (!userId) {
       setProfile(null);
-      return { error: null as string | null };
+      return { error: null };
     }
 
     const { data, error } = await supabase
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setProfile(data as Profile);
-    return { error: null as string | null };
+    return { error: null };
   }, []);
 
   useEffect(() => {
