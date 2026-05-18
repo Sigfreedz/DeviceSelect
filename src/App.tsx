@@ -6,9 +6,23 @@ import TopDevices from './pages/TopDevices';
 import Recommend from './pages/Recommend';
 import Compare from './pages/Compare';
 import Guides from './pages/Guides';
+import Dashboard from './pages/Dashboard';
+import Faculty from './pages/Faculty';
+import FacultyMethodology from './pages/FacultyMethodology';
+import FacultyReports from './pages/FacultyReports';
+import Admin from './pages/Admin';
+import AdminDevices from './pages/AdminDevices';
+import AdminAnalytics from './pages/AdminAnalytics';
+import AdminUsers from './pages/AdminUsers';
 import AuthForm from './components/AuthForm';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import styles from './styles/AuthGate.module.css';
+
+type Role = 'student' | 'faculty' | 'admin';
+
+const isRole = (value: string | null | undefined): value is Role => {
+  return value === 'student' || value === 'faculty' || value === 'admin';
+};
 
 const AuthGate: React.FC = () => (
   <div className="app-container">
@@ -42,24 +56,82 @@ const LoadingState: React.FC = () => (
   </div>
 );
 
+const roleLanding: Record<Role, string> = {
+  student: '/dashboard',
+  faculty: '/faculty',
+  admin: '/admin'
+};
+
+const AccessDenied: React.FC = () => {
+  const { profile } = useAuth();
+  const role = isRole(profile?.role) ? profile?.role : null;
+  const destination = role ? roleLanding[role] : '/';
+  const buttonLabel = role ? 'Go to your portal' : 'Return to home';
+  const ariaLabel = role ? 'Go to your role dashboard' : 'Return to the home page';
+
+  const handleNavigate = () => {
+    window.history.pushState({}, '', destination);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  return (
+    <div className="app-container">
+      <Navbar />
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <div>
+            <h1 className={styles.title}>Access restricted</h1>
+            <p className={styles.subtitle}>
+              {role
+                ? `Your account is set to the ${role} role, which does not grant access here.`
+                : 'Your profile is still pending a valid role assignment.'}
+            </p>
+          </div>
+          <button
+            className={styles.actionButton}
+            type="button"
+            onClick={handleNavigate}
+            aria-label={ariaLabel}
+          >
+            {buttonLabel}
+          </button>
+        </div>
+      </main>
+      <footer>
+        <div className="footer-content">
+          <p>&copy; 2026 Web-Based Device Selection Platform for IT Students. All rights reserved.</p>
+          <p>Designed for BSIT Academic Excellence.</p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const ProtectedRoute: React.FC<{
+  allowedRoles?: Role[];
+  children: React.ReactElement;
+}> = ({ allowedRoles, children }) => {
+  const { user, profile, isLoading } = useAuth();
+  const role = isRole(profile?.role) ? profile?.role : null;
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+  if (!user) {
+    return <AuthGate />;
+  }
+  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+    return <AccessDenied />;
+  }
+  return children;
+};
+
 const AppContent: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-  const { user, isLoading } = useAuth();
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
     const handleLocationChange = () => {
-      const path = window.location.pathname;
-      if (path === '/top-devices') {
-        setCurrentPage('top-devices');
-      } else if (path === '/recommend') {
-        setCurrentPage('recommend');
-      } else if (path === '/compare') {
-        setCurrentPage('compare');
-      } else if (path === '/guides') {
-        setCurrentPage('guides');
-      } else {
-        setCurrentPage('home');
-      }
+      setCurrentPath(window.location.pathname);
     };
 
     handleLocationChange();
@@ -67,30 +139,94 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
 
-  const renderProtected = (page: React.ReactElement) => {
-    if (isLoading) {
-      return <LoadingState />;
-    }
-    if (!user) {
-      return <AuthGate />;
-    }
-    return page;
-  };
+  const normalizedPath = currentPath.replace(/\/+$/, '') || '/';
 
-  if (currentPage === 'guides') {
-    return renderProtected(<Guides />);
-  }
-
-  if (currentPage === 'top-devices') {
-    return renderProtected(<TopDevices />);
-  }
-
-  if (currentPage === 'recommend') {
+  if (normalizedPath === '/recommend') {
     return <Recommend />;
   }
 
-  if (currentPage === 'compare') {
-    return renderProtected(<Compare />);
+  if (normalizedPath === '/guides') {
+    return <Guides />;
+  }
+
+  if (normalizedPath === '/top-devices') {
+    return (
+      <ProtectedRoute>
+        <TopDevices />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/compare') {
+    return (
+      <ProtectedRoute>
+        <Compare />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/dashboard') {
+    return (
+      <ProtectedRoute allowedRoles={['student']}>
+        <Dashboard />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/faculty') {
+    return (
+      <ProtectedRoute allowedRoles={['faculty']}>
+        <Faculty />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/faculty/methodology') {
+    return (
+      <ProtectedRoute allowedRoles={['faculty']}>
+        <FacultyMethodology />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/faculty/reports') {
+    return (
+      <ProtectedRoute allowedRoles={['faculty']}>
+        <FacultyReports />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/admin') {
+    return (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Admin />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/admin/devices') {
+    return (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminDevices />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/admin/analytics') {
+    return (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminAnalytics />
+      </ProtectedRoute>
+    );
+  }
+
+  if (normalizedPath === '/admin/users') {
+    return (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminUsers />
+      </ProtectedRoute>
+    );
   }
 
   return (

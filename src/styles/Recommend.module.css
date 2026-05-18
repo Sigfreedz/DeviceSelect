@@ -250,6 +250,11 @@
   color: #fff;
 }
 
+.statusText {
+  margin-top: 14px;
+  color: var(--text-secondary);
+}
+
 @media (max-width: 768px) {
   .container { padding: 30px; }
   .optionsGrid { grid-template-columns: 1fr; }

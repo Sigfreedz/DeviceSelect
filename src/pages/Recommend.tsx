@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { isUuid } from '../utils/isUuid';
+import { recordInteractionEvent } from '../utils/interactionTracking';
 import { Device, rankDevices } from '../utils/saw';
 import styles from '../styles/Recommend.module.css';
 
@@ -13,6 +16,7 @@ const trackLabelMap: Record<TrackOption, string> = {
   data: 'Data',
   general: 'General'
 };
+const MAX_SAVED_DEVICES = 3;
 
 const testConnection = async () => {
   const { count, error } = await supabase
@@ -27,6 +31,7 @@ const testConnection = async () => {
 };
 
 const Recommend: React.FC = () => {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [selections, setSelections] = useState({
     track: '' as TrackOption | '',
@@ -35,8 +40,16 @@ const Recommend: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<Device[]>([]);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const recommendation = recommendations[0] || null;
+
+  const logInteraction = async (eventType: 'recommendation_view' | 'comparison_click', deviceId?: string) => {
+    const result = await recordInteractionEvent(user?.id, eventType, deviceId);
+    if (!result.ok && result.reason !== 'missing_user') {
+      console.error('Unable to log interaction.');
+    }
+  };
 
   const fetchDevices = async (): Promise<Device[]> => {
     try {
@@ -60,6 +73,7 @@ const Recommend: React.FC = () => {
     portability?: 'light' | 'medium' | 'heavy';
   }) => {
     setLoading(true);
+    setSaveMessage(null);
 
     const allDevices = await fetchDevices();
     const ranked = rankDevices(allDevices, {
@@ -69,6 +83,10 @@ const Recommend: React.FC = () => {
     });
 
     setRecommendations(ranked.slice(0, 5));
+    const topRecommendation = ranked[0];
+    if (topRecommendation) {
+      await logInteraction('recommendation_view', topRecommendation.id);
+    }
     setLoading(false);
   };
 
@@ -109,7 +127,70 @@ const Recommend: React.FC = () => {
       portability: ''
     });
     setRecommendations([]);
+    setSaveMessage(null);
     setStep(1);
+  };
+
+  const handleSaveRecommendation = async () => {
+    setSaveMessage(null);
+
+    if (!user?.id) {
+      setSaveMessage('Please sign in to save a recommendation.');
+      return;
+    }
+
+    if (!recommendation) {
+      setSaveMessage('No recommendation available to save yet.');
+      return;
+    }
+
+    if (!isUuid(recommendation.id)) {
+      setSaveMessage('Unable to save this recommendation due to a technical issue. Please try again.');
+      return;
+    }
+
+    try {
+      const { count, error: countError } = await supabase
+        .from('saved_devices')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (countError) throw countError;
+
+      if ((count ?? 0) >= MAX_SAVED_DEVICES) {
+        setSaveMessage(
+          `You can only save up to ${MAX_SAVED_DEVICES} devices. Remove one from the dashboard to continue.`
+        );
+        return;
+      }
+
+      const { data: existingSave, error: existingSaveError } = await supabase
+        .from('saved_devices')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('device_id', recommendation.id)
+        .maybeSingle();
+
+      if (existingSaveError) throw existingSaveError;
+
+      if (existingSave) {
+        setSaveMessage('This device is already in your saved list.');
+        return;
+      }
+
+      const { error: saveError } = await supabase.from('saved_devices').insert({
+        user_id: user.id,
+        device_id: recommendation.id
+      });
+
+      if (saveError) {
+        throw saveError;
+      }
+
+      setSaveMessage('Device saved successfully. Check your Student Dashboard.');
+    } catch (error: any) {
+      setSaveMessage(error?.message ?? 'Failed to save device. Please check your connection and try again.');
+    }
   };
 
   return (
@@ -214,9 +295,12 @@ const Recommend: React.FC = () => {
                   <ScoreBreakdown device={recommendation} />
 
                   <div className={styles.actionGroup}>
-                    <button className={styles.primaryBtn}>Download Full Report</button>
+                    <button className={styles.primaryBtn} onClick={handleSaveRecommendation}>
+                      Save to Dashboard
+                    </button>
                     <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
                   </div>
+                  {saveMessage && <p className={styles.statusText}>{saveMessage}</p>}
                 </div>
               )}
 

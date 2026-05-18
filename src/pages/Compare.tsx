@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 import deviceData from '../data/devices.json';
 import { supabase } from '../lib/supabase';
+import { recordInteractionEvent } from '../utils/interactionTracking';
 import styles from '../styles/Compare.module.css';
 
 type RawDevice = Record<string, any>;
@@ -50,10 +52,18 @@ const normalizeDevice = (device: RawDevice): Device => {
 };
 
 const Compare: React.FC = () => {
+  const { user } = useAuth();
   const [devices, setDevices] = useState<RawDevice[]>(deviceData as RawDevice[]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const logComparisonClick = async (deviceId: string) => {
+    const result = await recordInteractionEvent(user?.id, 'comparison_click', deviceId);
+    if (!result.ok && result.reason !== 'missing_user') {
+      console.error('Unable to log comparison click.');
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -87,6 +97,7 @@ const Compare: React.FC = () => {
       setSelectedIds(selectedIds.filter(sid => sid !== id));
     } else if (selectedIds.length < 3) {
       setSelectedIds([...selectedIds, id]);
+      void logComparisonClick(id);
     }
   };
 
