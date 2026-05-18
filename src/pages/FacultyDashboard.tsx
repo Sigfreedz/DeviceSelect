@@ -16,6 +16,10 @@ interface TopDevice {
 }
 
 const MIN_VISIBLE_PROGRESS_BAR_WIDTH_PERCENT = 12;
+const MIN_RATING = 1;
+const MAX_RATING = 5;
+const DEFAULT_STORAGE_TYPE = 'SSD';
+const DEVICE_UNAVAILABLE_LABEL = 'Device information unavailable';
 
 const isInteractionType = (value: unknown): value is InteractionType => {
   return value === 'recommendation_view' || value === 'comparison_click';
@@ -84,7 +88,7 @@ const FacultyDashboard: React.FC = () => {
           (devicesResult.data ?? []).map(device => [
             String(device.id),
             {
-              name: String(device.name ?? 'Unknown device'),
+              name: String(device.name ?? DEVICE_UNAVAILABLE_LABEL),
               brand: String(device.brand ?? ''),
               ram_gb: typeof device.ram_gb === 'number' ? device.ram_gb : null,
               storage_gb: typeof device.storage_gb === 'number' ? device.storage_gb : null,
@@ -99,7 +103,7 @@ const FacultyDashboard: React.FC = () => {
           const details = deviceMap.get(deviceId);
           return {
             id: deviceId,
-            name: details?.name ?? 'Device information unavailable',
+            name: details?.name ?? DEVICE_UNAVAILABLE_LABEL,
             brand: details?.brand ?? '',
             saveCount,
             ramGb: details?.ram_gb ?? null,
@@ -111,7 +115,7 @@ const FacultyDashboard: React.FC = () => {
 
       const ratings = ((feedbackResult.data ?? []) as Array<{ rating: number | null }>)
         .map(row => Number(row.rating))
-        .filter(rating => Number.isFinite(rating) && rating >= 1 && rating <= 5);
+        .filter(rating => Number.isFinite(rating) && rating >= MIN_RATING && rating <= MAX_RATING);
       setRatingCount(ratings.length);
       setAverageRating(
         ratings.length > 0
@@ -148,7 +152,7 @@ const FacultyDashboard: React.FC = () => {
   const primaryInsight = useMemo(() => {
     const mostSaved = topDevices[0];
     if (mostSaved?.ramGb && mostSaved?.storageGb) {
-      return `Most students prioritized ${mostSaved.ramGb}GB RAM + ${mostSaved.storageGb}GB ${mostSaved.storageType ?? 'SSD'}.`;
+      return `Most students prioritized ${mostSaved.ramGb}GB RAM + ${mostSaved.storageGb}GB ${mostSaved.storageType ?? DEFAULT_STORAGE_TYPE}.`;
     }
     return 'Not enough complete specification data yet to derive a dominant hardware trend.';
   }, [topDevices]);
