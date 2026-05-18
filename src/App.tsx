@@ -20,6 +20,10 @@ import styles from './styles/AuthGate.module.css';
 
 type Role = 'student' | 'faculty' | 'admin';
 
+const isRole = (value: string | null | undefined): value is Role => {
+  return value === 'student' || value === 'faculty' || value === 'admin';
+};
+
 const AuthGate: React.FC = () => (
   <div className="app-container">
     <Navbar />
@@ -60,7 +64,7 @@ const roleLanding: Record<Role, string> = {
 
 const AccessDenied: React.FC = () => {
   const { profile } = useAuth();
-  const role = profile?.role;
+  const role = isRole(profile?.role) ? profile?.role : null;
   const destination = role ? roleLanding[role] : '/';
 
   const handleNavigate = () => {
@@ -78,7 +82,7 @@ const AccessDenied: React.FC = () => {
             <p className={styles.subtitle}>
               {role
                 ? `Your account is set to the ${role} role, which does not grant access here.`
-                : 'Your profile is still pending a role assignment.'}
+                : 'Your profile is still pending a valid role assignment.'}
             </p>
           </div>
           <button className={styles.actionButton} type="button" onClick={handleNavigate}>
@@ -101,6 +105,7 @@ const ProtectedRoute: React.FC<{
   children: React.ReactElement;
 }> = ({ allowedRoles, children }) => {
   const { user, profile, isLoading } = useAuth();
+  const role = isRole(profile?.role) ? profile?.role : null;
 
   if (isLoading) {
     return <LoadingState />;
@@ -108,7 +113,7 @@ const ProtectedRoute: React.FC<{
   if (!user) {
     return <AuthGate />;
   }
-  if (allowedRoles && (!profile || !allowedRoles.includes(profile.role))) {
+  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
     return <AccessDenied />;
   }
   return children;
