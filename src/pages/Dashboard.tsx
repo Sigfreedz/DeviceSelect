@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
             id: String(row.id),
             device_id: String(row.device_id),
             created_at: String(row.created_at ?? ''),
-            device_name: details?.name ?? 'Device details unavailable',
+            device_name: details?.name ?? 'Device information not found',
             brand: details?.brand ?? 'Unknown Brand',
             price_php: details?.price_php ?? null
           };

@@ -101,7 +101,12 @@ const Admin: React.FC = () => {
     const adminCount = profiles.filter(profile => profile.role === 'admin').length;
     const averageRating =
       feedbackResponses.length > 0
-        ? feedbackResponses.reduce((sum, response) => sum + response.rating, 0) / feedbackResponses.length
+        ? Number(
+            (
+              feedbackResponses.reduce((sum, response) => sum + response.rating, 0) /
+              feedbackResponses.length
+            ).toFixed(2)
+          )
         : 0;
     const recommendationViews = interactionLogs.filter(
       log => log.event_type === 'recommendation_view'
@@ -178,7 +183,7 @@ const Admin: React.FC = () => {
     {
       title: 'Average Rating',
       meta: 'Effectiveness',
-      value: feedbackResponses.length > 0 ? `${metrics.averageRating.toFixed(2)}/5` : 'No data',
+      value: feedbackResponses.length > 0 ? `${metrics.averageRating}/5` : 'No data',
       description: 'Overall perceived system effectiveness across submitted feedback.'
     },
     {

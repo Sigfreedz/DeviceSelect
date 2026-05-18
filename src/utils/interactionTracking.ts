@@ -17,9 +17,14 @@ interface RecordInteractionResult {
 type ColumnCandidate = 'event_type' | 'interaction_type' | 'action_type';
 
 const eventColumns: ColumnCandidate[] = ['event_type', 'interaction_type', 'action_type'];
-const hasDeviceIdConstraintError = (message: string) => {
-  const normalizedMessage = message.toLowerCase();
-  return normalizedMessage.includes('device_id') || normalizedMessage.includes('foreign key');
+let cachedInsertColumn: ColumnCandidate | null = null;
+
+const hasDeviceIdConstraintError = (error: { code?: string; details?: string; message?: string } | null) => {
+  if (!error) return false;
+  if (error.code === '23503') return true;
+
+  const normalizedDetails = `${error.details ?? ''} ${error.message ?? ''}`.toLowerCase();
+  return normalizedDetails.includes('device_id') || normalizedDetails.includes('foreign key');
 };
 
 const normalizeEventType = (value: unknown): InteractionEventType | null => {
@@ -79,8 +84,11 @@ export const recordInteractionEvent = async (
   }
 
   const safeDeviceId = deviceId && isUuid(deviceId) ? deviceId : null;
+  const columnsToTry = cachedInsertColumn
+    ? [cachedInsertColumn, ...eventColumns.filter(column => column !== cachedInsertColumn)]
+    : eventColumns;
 
-  for (const column of eventColumns) {
+  for (const column of columnsToTry) {
     const payload: Record<string, unknown> = {
       user_id: userId,
       [column]: eventType
@@ -93,13 +101,14 @@ export const recordInteractionEvent = async (
     const { error } = await supabase.from('interaction_logs').insert(payload);
 
     if (!error) {
+      cachedInsertColumn = column;
       return {
         ok: true,
         reason: null
       };
     }
 
-    if (safeDeviceId && hasDeviceIdConstraintError(error.message ?? '')) {
+    if (safeDeviceId && hasDeviceIdConstraintError(error)) {
       const fallbackPayload = {
         user_id: userId,
         [column]: eventType
@@ -107,6 +116,7 @@ export const recordInteractionEvent = async (
       const fallbackResult = await supabase.from('interaction_logs').insert(fallbackPayload);
 
       if (!fallbackResult.error) {
+        cachedInsertColumn = column;
         return {
           ok: true,
           reason: null

@@ -189,7 +189,7 @@ const Recommend: React.FC = () => {
 
       setSaveMessage('Device saved successfully. Check your Student Dashboard.');
     } catch (error: any) {
-      setSaveMessage(error?.message ?? 'Unable to save this recommendation right now.');
+      setSaveMessage(error?.message ?? 'Failed to save device. Please check your connection and try again.');
     }
   };
 
