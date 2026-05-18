@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
 import styles from './FacultyDashboard.module.css';
@@ -17,10 +17,14 @@ interface TopDevice {
 
 const MIN_PROGRESS_BAR_WIDTH_PERCENT = 12;
 
+const isInteractionType = (value: unknown): value is InteractionType => {
+  return value === 'recommendation_view' || value === 'comparison_click';
+};
+
 const getInteractionType = (row: Record<string, unknown>): InteractionType | null => {
   const candidates = [row.event_type, row.interaction_type, row.action_type];
   for (const candidate of candidates) {
-    if (candidate === 'recommendation_view' || candidate === 'comparison_click') {
+    if (isInteractionType(candidate)) {
       return candidate;
     }
   }
@@ -38,7 +42,7 @@ const FacultyDashboard: React.FC = () => {
     comparison_click: 0
   });
 
-  const loadFacultyDashboard = async () => {
+  const loadFacultyDashboard = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -134,7 +138,7 @@ const FacultyDashboard: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     void loadFacultyDashboard();
@@ -211,7 +215,9 @@ const FacultyDashboard: React.FC = () => {
                   {topDevices.map(device => (
                     <li key={device.id} className={styles.metricItem}>
                       <div>
-                        <p className={styles.metricTitle}>{`${device.brand} ${device.name}`.trim()}</p>
+                        <p className={styles.metricTitle}>
+                          {[device.brand, device.name].filter(Boolean).join(' ')}
+                        </p>
                         <p className={styles.mutedText}>{device.saveCount} saves</p>
                       </div>
                       <div className={styles.progressWrap} aria-hidden="true">
