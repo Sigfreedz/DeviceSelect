@@ -15,6 +15,7 @@ const trackLabelMap: Record<TrackOption, string> = {
   data: 'Data',
   general: 'General'
 };
+const MAX_SAVED_DEVICES = 3;
 
 const testConnection = async () => {
   const { count, error } = await supabase
@@ -152,7 +153,7 @@ const Recommend: React.FC = () => {
     }
 
     if (!isUuid(recommendation.id)) {
-      setSaveMessage('This recommendation cannot be saved because it is not linked to a Supabase device.');
+      setSaveMessage('This device cannot be saved at this time.');
       return;
     }
 
@@ -164,8 +165,10 @@ const Recommend: React.FC = () => {
 
       if (countError) throw countError;
 
-      if ((count ?? 0) >= 3) {
-        setSaveMessage('You can only save up to 3 devices. Remove one from the dashboard to continue.');
+      if ((count ?? 0) >= MAX_SAVED_DEVICES) {
+        setSaveMessage(
+          `You can only save up to ${MAX_SAVED_DEVICES} devices. Remove one from the dashboard to continue.`
+        );
         return;
       }
 

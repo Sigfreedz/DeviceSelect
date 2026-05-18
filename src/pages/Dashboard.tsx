@@ -25,6 +25,8 @@ interface InteractionLog {
   created_at: string;
 }
 
+const MAX_SAVED_DEVICES = 3;
+
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -209,7 +211,7 @@ const Dashboard: React.FC = () => {
     event.preventDefault();
     if (!user?.id) return;
 
-    if (rating < 1 || rating > 5) {
+    if (rating === 0 || rating < 1 || rating > 5) {
       setFeedbackMessage('Please choose a rating from 1 to 5 before submitting.');
       return;
     }
@@ -275,7 +277,7 @@ const Dashboard: React.FC = () => {
     {
       title: 'Saved Devices',
       meta: 'Required',
-      description: `${stats.savedCount}/3 devices saved`,
+      description: `${stats.savedCount}/${MAX_SAVED_DEVICES} devices saved`,
       value: `${stats.savedCount}`
     },
     {
@@ -299,7 +301,9 @@ const Dashboard: React.FC = () => {
   ];
 
   const renderSavedDevice = (device: SavedDevice) => {
-    const priceLabel = device.price_php ? `₱${device.price_php.toLocaleString()}` : 'Price unavailable';
+    const priceLabel = device.price_php
+      ? `₱${device.price_php.toLocaleString('en-PH')}`
+      : 'Price unavailable';
     const savedDateLabel = device.created_at
       ? new Date(device.created_at).toLocaleDateString()
       : 'Unknown date';
@@ -348,7 +352,7 @@ const Dashboard: React.FC = () => {
         <>
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Saved Devices (max 3)</h2>
+              <h2 className={styles.sectionTitle}>Saved Devices (max {MAX_SAVED_DEVICES})</h2>
               <div className={styles.sectionActions}>
                 <button type="button" className={styles.inlineButton} onClick={() => navigate('/recommend')}>
                   Get Recommendation
@@ -360,7 +364,7 @@ const Dashboard: React.FC = () => {
             </div>
             {savedDevices.length === 0 ? (
               <p className={styles.sectionEmpty}>
-                You have not saved a device yet. Generate a recommendation and save up to 3 devices.
+                You have not saved a device yet. Generate a recommendation and save up to {MAX_SAVED_DEVICES} devices.
               </p>
             ) : (
               <div className={styles.savedList}>
