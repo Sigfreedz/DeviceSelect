@@ -301,7 +301,7 @@ const Dashboard: React.FC = () => {
     return (
       <article key={device.id} className={styles.savedItem}>
         <div>
-          <h3 className={styles.savedTitle}>{device.brand} {device.device_name}</h3>
+          <h3 className={styles.savedTitle}>{`${device.brand} ${device.device_name}`.trim()}</h3>
           <p className={styles.savedMeta}>{priceLabel} · Saved on {savedDateLabel}</p>
         </div>
         <button
