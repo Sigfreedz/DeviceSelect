@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import deviceData from '../data/devices.json';
 import { supabase } from '../lib/supabase';
+import { isUuid } from '../utils/isUuid';
 import styles from '../styles/Compare.module.css';
 
 type RawDevice = Record<string, any>;
@@ -56,8 +57,6 @@ const Compare: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const isUuid = (value: string) =>
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
   const logComparisonClick = async (deviceId: string) => {
     if (!user?.id) return;

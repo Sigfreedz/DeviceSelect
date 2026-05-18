@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { isUuid } from '../utils/isUuid';
 import { Device, rankDevices } from '../utils/saw';
 import styles from '../styles/Recommend.module.css';
 
@@ -40,8 +41,6 @@ const Recommend: React.FC = () => {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const recommendation = recommendations[0] || null;
-  const isUuid = (value: string) =>
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
   const logInteraction = async (
     eventType: 'recommendation_view' | 'comparison_click',

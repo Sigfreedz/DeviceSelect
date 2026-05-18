@@ -298,6 +298,31 @@ const Dashboard: React.FC = () => {
     }
   ];
 
+  const renderSavedDevice = (device: SavedDevice) => {
+    const priceLabel = device.price_php ? `₱${device.price_php.toLocaleString()}` : 'Price unavailable';
+    const savedDateLabel = device.created_at
+      ? new Date(device.created_at).toLocaleDateString()
+      : 'Unknown date';
+
+    return (
+      <article key={device.id} className={styles.savedItem}>
+        <div>
+          <h3 className={styles.savedTitle}>{device.brand} {device.device_name}</h3>
+          <p className={styles.savedMeta}>{priceLabel} · Saved on {savedDateLabel}</p>
+        </div>
+        <button
+          type="button"
+          className={styles.removeButton}
+          onClick={() => {
+            handleRemoveSavedDevice(device.id);
+          }}
+        >
+          Remove
+        </button>
+      </article>
+    );
+  };
+
   return (
     <DashboardLayout
       title="Student Dashboard"
@@ -339,26 +364,7 @@ const Dashboard: React.FC = () => {
               </p>
             ) : (
               <div className={styles.savedList}>
-                {savedDevices.map(device => (
-                  <article key={device.id} className={styles.savedItem}>
-                    <div>
-                      <h3 className={styles.savedTitle}>{device.brand} {device.device_name}</h3>
-                      <p className={styles.savedMeta}>
-                        {device.price_php ? `₱${device.price_php.toLocaleString()}` : 'Price unavailable'} · Saved on{' '}
-                        {device.created_at ? new Date(device.created_at).toLocaleDateString() : 'Unknown date'}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className={styles.removeButton}
-                      onClick={() => {
-                        handleRemoveSavedDevice(device.id);
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </article>
-                ))}
+                {savedDevices.map(renderSavedDevice)}
               </div>
             )}
           </section>

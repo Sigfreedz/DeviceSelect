@@ -207,7 +207,7 @@
 .fieldInput {
   border-radius: 10px;
   border: 1px solid var(--card-border);
-  background: rgba(15, 23, 42, 0.7);
+  background: var(--secondary-bg);
   color: var(--text-primary);
   padding: 12px;
   font: inherit;
