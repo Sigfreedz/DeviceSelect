@@ -6,9 +6,45 @@ import TopDevices from './pages/TopDevices';
 import Recommend from './pages/Recommend';
 import Compare from './pages/Compare';
 import Guides from './pages/Guides';
+import AuthForm from './components/AuthForm';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import styles from './styles/AuthGate.module.css';
 
-function App() {
+const AuthGate: React.FC = () => (
+  <div className="app-container">
+    <Navbar />
+    <main className={styles.main}>
+      <div className={styles.content}>
+        <div>
+          <h1 className={styles.title}>Sign in required</h1>
+          <p className={styles.subtitle}>
+            Log in with your PLV email to access this section of DeviceLabs.
+          </p>
+        </div>
+        <AuthForm initialMode="login" />
+      </div>
+    </main>
+    <footer>
+      <div className="footer-content">
+        <p>&copy; 2026 Web-Based Device Selection Platform for IT Students. All rights reserved.</p>
+        <p>Designed for BSIT Academic Excellence.</p>
+      </div>
+    </footer>
+  </div>
+);
+
+const LoadingState: React.FC = () => (
+  <div className="app-container">
+    <Navbar />
+    <main className={styles.loading}>
+      <p>Loading your account...</p>
+    </main>
+  </div>
+);
+
+const AppContent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -31,12 +67,22 @@ function App() {
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
 
+  const renderProtected = (page: React.ReactElement) => {
+    if (isLoading) {
+      return <LoadingState />;
+    }
+    if (!user) {
+      return <AuthGate />;
+    }
+    return page;
+  };
+
   if (currentPage === 'guides') {
-    return <Guides />;
+    return renderProtected(<Guides />);
   }
 
   if (currentPage === 'top-devices') {
-    return <TopDevices />;
+    return renderProtected(<TopDevices />);
   }
 
   if (currentPage === 'recommend') {
@@ -44,7 +90,7 @@ function App() {
   }
 
   if (currentPage === 'compare') {
-    return <Compare />;
+    return renderProtected(<Compare />);
   }
 
   return (
@@ -61,6 +107,14 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

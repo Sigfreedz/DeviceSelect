@@ -89,6 +89,82 @@
   box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
 }
 
+.navAuth {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navAuth .signupBtn {
+  background: #4361ee;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.navAuth .signupBtn:hover {
+  box-shadow: 0 0 18px rgba(67, 97, 238, 0.35);
+  transform: translateY(-1px);
+}
+
+.navAuth .logoutBtn {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  min-height: 44px;
+}
+
+.navAuth .logoutBtn:hover {
+  border-color: var(--accent-violet);
+  color: var(--text-primary);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.userLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.65rem;
+}
+
+.userEmail {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.authOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1100;
+}
+
+.authModal {
+  width: 100%;
+  max-width: 440px;
+}
+
 .navMenu {
   display: contents;
 }
@@ -168,9 +244,21 @@
   .navAuth {
     width: 100%;
     padding-bottom: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .navAuth .loginBtn {
     width: 100%;
+  }
+
+  .navAuth .signupBtn,
+  .navAuth .logoutBtn {
+    width: 100%;
+  }
+
+  .userInfo {
+    align-items: flex-start;
   }
 }
