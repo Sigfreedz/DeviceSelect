@@ -351,7 +351,9 @@ const Dashboard: React.FC = () => {
                     <button
                       type="button"
                       className={styles.removeButton}
-                      onClick={() => { void handleRemoveSavedDevice(device.id); }}
+                      onClick={() => {
+                        handleRemoveSavedDevice(device.id);
+                      }}
                     >
                       Remove
                     </button>
@@ -390,7 +392,7 @@ const Dashboard: React.FC = () => {
           </section>
 
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Rate DeviceSelect Effectiveness</h2>
+            <h2 className={styles.sectionTitle}>Rate DeviceLabs Effectiveness</h2>
             <p className={styles.sectionDescription}>
               One response per student. Submitting again updates your existing response.
             </p>

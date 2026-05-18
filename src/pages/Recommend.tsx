@@ -291,7 +291,7 @@ const Recommend: React.FC = () => {
                   <ScoreBreakdown device={recommendation} />
 
                   <div className={styles.actionGroup}>
-                    <button className={styles.primaryBtn} onClick={() => { void handleSaveRecommendation(); }}>
+                    <button className={styles.primaryBtn} onClick={handleSaveRecommendation}>
                       Save to Dashboard
                     </button>
                     <button className={styles.secondaryBtn} onClick={restartQuiz}>Restart Quiz</button>
