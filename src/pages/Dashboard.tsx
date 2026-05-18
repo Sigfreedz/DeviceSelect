@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { fetchInteractionEvents } from '../utils/interactionTracking';
 import styles from '../styles/RoleDashboard.module.css';
 
 interface SavedDevice {
@@ -119,21 +120,10 @@ const Dashboard: React.FC = () => {
             }
           : null;
 
-        const { data: interactionsData, error: interactionsError } = await supabase
-          .from('interaction_logs')
-          .select('event_type, created_at')
-          .eq('user_id', user.id);
-
-        if (interactionsError) throw interactionsError;
-
-        const normalizedInteractions: InteractionLog[] = (interactionsData ?? [])
-          .filter(
-            row => row.event_type === 'recommendation_view' || row.event_type === 'comparison_click'
-          )
-          .map(row => ({
-            event_type: row.event_type as 'recommendation_view' | 'comparison_click',
-            created_at: String(row.created_at ?? '')
-          }));
+        const normalizedInteractions: InteractionLog[] = (await fetchInteractionEvents(user.id)).map(row => ({
+          event_type: row.event_type,
+          created_at: row.created_at
+        }));
 
         if (!isMounted) return;
 

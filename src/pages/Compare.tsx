@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import deviceData from '../data/devices.json';
 import { supabase } from '../lib/supabase';
-import { isUuid } from '../utils/isUuid';
+import { recordInteractionEvent } from '../utils/interactionTracking';
 import styles from '../styles/Compare.module.css';
 
 type RawDevice = Record<string, any>;
@@ -59,15 +59,9 @@ const Compare: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const logComparisonClick = async (deviceId: string) => {
-    if (!user?.id) return;
-    const safeDeviceId = isUuid(deviceId) ? deviceId : null;
-    const { error } = await supabase.from('interaction_logs').insert({
-      user_id: user.id,
-      event_type: 'comparison_click',
-      device_id: safeDeviceId
-    });
-    if (error) {
-      console.error('Unable to log comparison click:', error.message);
+    const isLogged = await recordInteractionEvent(user?.id, 'comparison_click', deviceId);
+    if (!isLogged) {
+      console.error('Unable to log comparison click.');
     }
   };
 

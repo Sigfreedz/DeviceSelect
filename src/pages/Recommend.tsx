@@ -4,6 +4,7 @@ import { ScoreBreakdown } from '../components/ScoreBreakdown';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { isUuid } from '../utils/isUuid';
+import { recordInteractionEvent } from '../utils/interactionTracking';
 import { Device, rankDevices } from '../utils/saw';
 import styles from '../styles/Recommend.module.css';
 
@@ -43,19 +44,10 @@ const Recommend: React.FC = () => {
 
   const recommendation = recommendations[0] || null;
 
-  const logInteraction = async (
-    eventType: 'recommendation_view' | 'comparison_click',
-    deviceId?: string
-  ) => {
-    if (!user?.id) return;
-    const safeDeviceId = deviceId && isUuid(deviceId) ? deviceId : null;
-    const { error } = await supabase.from('interaction_logs').insert({
-      user_id: user.id,
-      event_type: eventType,
-      device_id: safeDeviceId
-    });
-    if (error) {
-      console.error('Unable to log interaction:', error.message);
+  const logInteraction = async (eventType: 'recommendation_view' | 'comparison_click', deviceId?: string) => {
+    const isLogged = await recordInteractionEvent(user?.id, eventType, deviceId);
+    if (!isLogged) {
+      console.error('Unable to log interaction.');
     }
   };
 

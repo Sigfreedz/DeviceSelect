@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
+import { fetchInteractionEvents } from '../utils/interactionTracking';
 import styles from '../styles/RoleDashboard.module.css';
 
 interface ProfileSummary {
@@ -12,11 +13,6 @@ interface ProfileSummary {
 
 interface FeedbackSummary {
   rating: number;
-  created_at: string;
-}
-
-interface InteractionSummary {
-  event_type: 'recommendation_view' | 'comparison_click';
   created_at: string;
 }
 
@@ -34,7 +30,9 @@ const Admin: React.FC = () => {
   const [savedCount, setSavedCount] = useState(0);
   const [profiles, setProfiles] = useState<ProfileSummary[]>([]);
   const [feedbackResponses, setFeedbackResponses] = useState<FeedbackSummary[]>([]);
-  const [interactionLogs, setInteractionLogs] = useState<InteractionSummary[]>([]);
+  const [interactionLogs, setInteractionLogs] = useState<
+    Array<{ event_type: 'recommendation_view' | 'comparison_click'; created_at: string }>
+  >([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,8 +46,7 @@ const Admin: React.FC = () => {
           devicesResult,
           savedDevicesResult,
           profilesResult,
-          feedbackResult,
-          interactionsResult
+          feedbackResult
         ] = await Promise.all([
           supabase.from('devices').select('*', { count: 'exact', head: true }),
           supabase.from('saved_devices').select('*', { count: 'exact', head: true }),
@@ -57,26 +54,29 @@ const Admin: React.FC = () => {
             .from('profiles')
             .select('role, is_approved, it_track, created_at')
             .order('created_at', { ascending: false }),
-          supabase.from('feedback_responses').select('rating, created_at'),
-          supabase.from('interaction_logs').select('event_type, created_at')
+          supabase.from('feedback_responses').select('rating, created_at')
         ]);
+        const interactionsResult = await fetchInteractionEvents();
 
         if (devicesResult.error) throw devicesResult.error;
         if (savedDevicesResult.error) throw savedDevicesResult.error;
         if (profilesResult.error) throw profilesResult.error;
         if (feedbackResult.error) throw feedbackResult.error;
-        if (interactionsResult.error) throw interactionsResult.error;
-
         if (!isMounted) return;
 
         setDeviceCount(devicesResult.count ?? 0);
         setSavedCount(savedDevicesResult.count ?? 0);
         setProfiles((profilesResult.data ?? []) as ProfileSummary[]);
         setFeedbackResponses((feedbackResult.data ?? []) as FeedbackSummary[]);
+        const normalizedInteractionRows = interactionsResult as Array<{
+          event_type: 'recommendation_view' | 'comparison_click';
+          created_at: string;
+        }>;
         setInteractionLogs(
-          ((interactionsResult.data ?? []) as InteractionSummary[]).filter(
-            log => log.event_type === 'recommendation_view' || log.event_type === 'comparison_click'
-          )
+          normalizedInteractionRows.map(log => ({
+            event_type: log.event_type,
+            created_at: log.created_at
+          }))
         );
       } catch (error: any) {
         if (!isMounted) return;
