@@ -354,7 +354,7 @@ const Dashboard: React.FC = () => {
             </div>
             {savedDevices.length === 0 ? (
               <p className={styles.sectionEmpty}>
-                You have not saved a device yet. Generate a recommendation and save up to {MAX_SAVED_DEVICES} devices.
+                No devices saved yet. Save up to {MAX_SAVED_DEVICES} from your recommendations.
               </p>
             ) : (
               <div className={styles.savedList}>

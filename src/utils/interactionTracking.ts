@@ -17,6 +17,10 @@ interface RecordInteractionResult {
 type ColumnCandidate = 'event_type' | 'interaction_type' | 'action_type';
 
 const eventColumns: ColumnCandidate[] = ['event_type', 'interaction_type', 'action_type'];
+const hasDeviceIdConstraintError = (message: string) => {
+  const normalizedMessage = message.toLowerCase();
+  return normalizedMessage.includes('device_id') || normalizedMessage.includes('foreign key');
+};
 
 const normalizeEventType = (value: unknown): InteractionEventType | null => {
   if (value === 'recommendation_view' || value === 'comparison_click') {
@@ -75,10 +79,6 @@ export const recordInteractionEvent = async (
   }
 
   const safeDeviceId = deviceId && isUuid(deviceId) ? deviceId : null;
-  const isDeviceIdRelatedError = (message: string) => {
-    const normalizedMessage = message.toLowerCase();
-    return normalizedMessage.includes('device_id') || normalizedMessage.includes('foreign key');
-  };
 
   for (const column of eventColumns) {
     const payload: Record<string, unknown> = {
@@ -99,7 +99,7 @@ export const recordInteractionEvent = async (
       };
     }
 
-    if (safeDeviceId && isDeviceIdRelatedError(error.message ?? '')) {
+    if (safeDeviceId && hasDeviceIdConstraintError(error.message ?? '')) {
       const fallbackPayload = {
         user_id: userId,
         [column]: eventType

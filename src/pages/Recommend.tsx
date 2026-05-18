@@ -145,7 +145,7 @@ const Recommend: React.FC = () => {
     }
 
     if (!isUuid(recommendation.id)) {
-      setSaveMessage('This recommendation has an invalid device identifier and cannot be saved.');
+      setSaveMessage('Unable to save this recommendation due to a technical issue. Please try again.');
       return;
     }
 
