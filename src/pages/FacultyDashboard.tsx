@@ -15,6 +15,8 @@ interface TopDevice {
   storageType: string | null;
 }
 
+const MIN_PROGRESS_BAR_WIDTH_PERCENT = 12;
+
 const getInteractionType = (row: Record<string, unknown>): InteractionType | null => {
   const candidates = [row.event_type, row.interaction_type, row.action_type];
   for (const candidate of candidates) {
@@ -144,7 +146,7 @@ const FacultyDashboard: React.FC = () => {
     if (mostSaved?.ramGb && mostSaved?.storageGb) {
       return `Most students prioritized ${mostSaved.ramGb}GB RAM + ${mostSaved.storageGb}GB ${mostSaved.storageType ?? 'SSD'}.`;
     }
-    return 'Most students prioritized 16GB RAM + 512GB SSD.';
+    return 'Not enough complete specification data yet to derive a dominant hardware trend.';
   }, [topDevices]);
 
   const methodologyCards = [
@@ -183,7 +185,12 @@ const FacultyDashboard: React.FC = () => {
       {!isLoading && errorMessage && (
         <section className={styles.stateCard}>
           <p>{errorMessage}</p>
-          <button type="button" className={styles.actionButton} onClick={() => { void loadFacultyDashboard(); }}>
+          <button
+            type="button"
+            className={styles.actionButton}
+            onClick={() => { void loadFacultyDashboard(); }}
+            aria-label="Retry loading dashboard data"
+          >
             Retry
           </button>
         </section>
@@ -210,7 +217,12 @@ const FacultyDashboard: React.FC = () => {
                       <div className={styles.progressWrap} aria-hidden="true">
                         <span
                           className={styles.progressBar}
-                          style={{ width: `${Math.max(12, Math.round((device.saveCount / Math.max(topSaveCount, 1)) * 100))}%` }}
+                          style={{
+                            width: `${Math.max(
+                              MIN_PROGRESS_BAR_WIDTH_PERCENT,
+                              Math.round((device.saveCount / Math.max(topSaveCount, 1)) * 100)
+                            )}%`
+                          }}
                         />
                       </div>
                     </li>
