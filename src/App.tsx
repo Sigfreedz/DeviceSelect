@@ -7,9 +7,7 @@ import Recommend from './pages/Recommend';
 import Compare from './pages/Compare';
 import Guides from './pages/Guides';
 import Dashboard from './pages/Dashboard';
-import Faculty from './pages/Faculty';
-import FacultyMethodology from './pages/FacultyMethodology';
-import FacultyReports from './pages/FacultyReports';
+import FacultyDashboard from './pages/FacultyDashboard';
 import Admin from './pages/Admin';
 import AdminDevices from './pages/AdminDevices';
 import AdminAnalytics from './pages/AdminAnalytics';
@@ -175,24 +173,8 @@ const AppContent: React.FC = () => {
 
   if (normalizedPath === '/faculty') {
     return (
-      <ProtectedRoute allowedRoles={['faculty']}>
-        <Faculty />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/faculty/methodology') {
-    return (
-      <ProtectedRoute allowedRoles={['faculty']}>
-        <FacultyMethodology />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/faculty/reports') {
-    return (
-      <ProtectedRoute allowedRoles={['faculty']}>
-        <FacultyReports />
+      <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+        <FacultyDashboard />
       </ProtectedRoute>
     );
   }

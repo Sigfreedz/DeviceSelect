@@ -9,6 +9,7 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>('login');
+  const [isPortalMenuOpen, setIsPortalMenuOpen] = useState(false);
   const { user, profile, isLoading, signOut } = useAuth();
 
   const navigate = (path: string) => (e: React.MouseEvent<HTMLElement>) => {
@@ -16,12 +17,14 @@ const Navbar: React.FC = () => {
     window.history.pushState({}, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
     setIsMobileMenuOpen(false);
+    setIsPortalMenuOpen(false);
   };
 
   const openAuth = (mode: AuthMode) => {
     setAuthMode(mode);
     setIsAuthOpen(true);
     setIsMobileMenuOpen(false);
+    setIsPortalMenuOpen(false);
   };
 
   const closeAuth = () => setIsAuthOpen(false);
@@ -31,9 +34,12 @@ const Navbar: React.FC = () => {
     if (error) {
       console.error(error);
     }
+    setIsPortalMenuOpen(false);
   };
 
   const currentPath = window.location.pathname;
+  const hasFacultyAccess = profile?.role === 'faculty' || profile?.role === 'admin';
+  const hasAdminAccess = profile?.role === 'admin';
 
   return (
     <>
@@ -66,6 +72,45 @@ const Navbar: React.FC = () => {
             <div className={styles.navAuth}>
               {user ? (
                 <>
+                  {hasFacultyAccess && (
+                    <div className={styles.portalMenuWrapper}>
+                      <button
+                        type="button"
+                        className={styles.portalMenuButton}
+                        onClick={() => setIsPortalMenuOpen(open => !open)}
+                        aria-haspopup="menu"
+                        aria-expanded={isPortalMenuOpen}
+                      >
+                        Portals
+                      </button>
+                      {isPortalMenuOpen && (
+                        <ul className={styles.portalMenu} role="menu" aria-label="Role dashboards">
+                          <li role="none">
+                            <a
+                              role="menuitem"
+                              href="/faculty"
+                              onClick={navigate('/faculty')}
+                              className={currentPath === '/faculty' ? styles.activePortalLink : ''}
+                            >
+                              Faculty Dashboard
+                            </a>
+                          </li>
+                          {hasAdminAccess && (
+                            <li role="none">
+                              <a
+                                role="menuitem"
+                                href="/admin"
+                                onClick={navigate('/admin')}
+                                className={currentPath === '/admin' ? styles.activePortalLink : ''}
+                              >
+                                Admin Console
+                              </a>
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                    </div>
+                  )}
                   <div className={styles.userInfo}>
                     <span className={styles.userLabel}>Signed in as</span>
                     <span className={styles.userEmail}>{profile?.email ?? user.email ?? 'User'}</span>
