@@ -105,7 +105,13 @@ const Navbar: React.FC = () => {
       </nav>
       {isAuthOpen && (
         <div className={styles.authOverlay} onClick={closeAuth}>
-          <div className={styles.authModal} role="dialog" aria-modal="true" onClick={event => event.stopPropagation()}>
+          <div
+            className={styles.authModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Authentication"
+            onClick={event => event.stopPropagation()}
+          >
             <AuthForm initialMode={authMode} onClose={closeAuth} />
           </div>
         </div>
