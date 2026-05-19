@@ -21,6 +21,11 @@ const cards = [
 ];
 
 const FacultyReports: React.FC = () => {
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
     <DashboardLayout
       title="Faculty Reports"
@@ -40,6 +45,17 @@ const FacultyReports: React.FC = () => {
       </div>
       <div className={styles.note}>
         <strong>Privacy note:</strong> All reports remain anonymized to protect student identities.
+      </div>
+      <div className={styles.sectionActions}>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty')}>
+          Open Faculty Analytics
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/overview')}>
+          Open Faculty Overview
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/methodology')}>
+          Open Methodology
+        </button>
       </div>
     </DashboardLayout>
   );

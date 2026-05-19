@@ -1,0 +1,159 @@
+.panel {
+  display: grid;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.meta {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.stackTrack {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.stackSegment {
+  min-width: 0;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ringWrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ringSvg {
+  width: 84px;
+  height: 84px;
+  transform: rotate(-90deg);
+}
+
+.ringTrack {
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 10;
+}
+
+.ringFill {
+  fill: transparent;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.ringLabel {
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.barList {
+  display: grid;
+  gap: 8px;
+}
+
+.barRow {
+  display: grid;
+  gap: 6px;
+}
+
+.barTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.barLabel {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.barValue {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.barTrack {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  min-width: 8px;
+}
+
+.spark {
+  display: flex;
+  align-items: end;
+  gap: 6px;
+  min-height: 84px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sparkBarWrap {
+  flex: 1;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+
+.sparkBar {
+  width: 100%;
+  border-radius: 6px 6px 2px 2px;
+  min-height: 6px;
+}
+
+.sparkLabel {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  line-height: 1;
+}

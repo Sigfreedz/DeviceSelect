@@ -1,4 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import {
+  BarListChart,
+  ProgressRing,
+  StackedShareChart,
+  TrendSparkBars
+} from '../components/dashboard/DashboardCharts';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
 import { fetchInteractionEvents } from '../utils/interactionTracking';
@@ -198,6 +204,23 @@ const AdminAnalytics: React.FC = () => {
   ];
 
   const maxFeatureCount = Math.max(...Object.values(metrics.featureCounts), 0);
+  const featureChartPoints = (Object.keys(featureLabelMap) as MostUsefulFeature[]).map(feature => ({
+    label: featureLabelMap[feature],
+    value: metrics.featureCounts[feature],
+    color: '#8b5cf6'
+  }));
+  const purchaseIntentChartPoints = (Object.keys(purchaseIntentLabelMap) as PurchaseIntent[]).map(intent => ({
+    label: purchaseIntentLabelMap[intent],
+    value: metrics.purchaseIntentCounts[intent],
+    color: intent === 'yes' ? '#22c55e' : intent === 'maybe' ? '#f59e0b' : '#ef4444'
+  }));
+  const feedbackTrend = feedbackRows
+    .slice(0, 10)
+    .reverse()
+    .map((row, index) => ({
+      label: row.created_at ? new Date(row.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : `R${index + 1}`,
+      value: row.rating && row.rating >= 1 && row.rating <= 5 ? row.rating : 0
+    }));
 
   return (
     <DashboardLayout
@@ -210,6 +233,29 @@ const AdminAnalytics: React.FC = () => {
 
       {!isLoading && !errorMessage && (
         <>
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Visual Overview</h2>
+            <div className={styles.analyticsGrid}>
+              <article className={styles.card}>
+                <StackedShareChart title="Most Useful Feature Share" points={featureChartPoints} />
+              </article>
+              <article className={styles.card}>
+                <BarListChart title="Purchase Intent Distribution" points={purchaseIntentChartPoints} />
+              </article>
+              <article className={styles.card}>
+                <ProgressRing
+                  title="Usefulness Rate"
+                  current={Math.round(metrics.usefulPercent)}
+                  total={100}
+                  subtitle={`${metrics.usefulPercent}% marked as useful`}
+                />
+              </article>
+              <article className={styles.card}>
+                <TrendSparkBars title="Recent Ratings (latest 10)" points={feedbackTrend} color="#06b6d4" />
+              </article>
+            </div>
+          </section>
+
           <div className={styles.grid}>
             {metricCards.map(card => (
               <article className={styles.card} key={card.title}>
@@ -247,34 +293,12 @@ const AdminAnalytics: React.FC = () => {
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Most Useful Feature</h2>
-            <div className={styles.savedList}>
-              {(Object.keys(featureLabelMap) as MostUsefulFeature[]).map(featureKey => {
-                const count = metrics.featureCounts[featureKey];
-                const fillPercent = maxFeatureCount > 0 ? Math.round((count / maxFeatureCount) * 100) : 0;
-                return (
-                  <div key={featureKey} className={styles.analyticsBarRow}>
-                    <p className={styles.savedMeta}>
-                      {featureLabelMap[featureKey]} · {count}
-                    </p>
-                    <div className={styles.analyticsBarTrack} aria-hidden="true">
-                      <span className={styles.analyticsBarFill} style={{ width: `${fillPercent}%` }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <BarListChart title="Feature Votes" points={featureChartPoints} maxValue={Math.max(1, maxFeatureCount)} />
           </section>
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Purchase Intent</h2>
-            <div className={styles.savedList}>
-              {(Object.keys(purchaseIntentLabelMap) as PurchaseIntent[]).map(intent => (
-                <article className={styles.savedItem} key={intent}>
-                  <h3 className={styles.savedTitle}>{purchaseIntentLabelMap[intent]}</h3>
-                  <p className={styles.savedMeta}>{metrics.purchaseIntentCounts[intent]} responses</p>
-                </article>
-              ))}
-            </div>
+            <StackedShareChart title="Intent Split" points={purchaseIntentChartPoints} />
           </section>
 
           <section className={styles.section}>

@@ -10,6 +10,9 @@ import Lessons from './pages/Lessons';
 import LessonDetail from './pages/LessonDetail';
 import Dashboard from './pages/Dashboard';
 import FacultyDashboard from './pages/FacultyDashboard';
+import Faculty from './pages/Faculty';
+import FacultyReports from './pages/FacultyReports';
+import FacultyMethodology from './pages/FacultyMethodology';
 import Admin from './pages/Admin';
 import AdminDevices from './pages/AdminDevices';
 import AdminAnalytics from './pages/AdminAnalytics';
@@ -169,6 +172,30 @@ const AppContent: React.FC = () => {
         element={(
           <ProtectedRoute allowedRoles={['faculty', 'admin']}>
             <FacultyDashboard />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/faculty/overview"
+        element={(
+          <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+            <Faculty />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/faculty/reports"
+        element={(
+          <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+            <FacultyReports />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/faculty/methodology"
+        element={(
+          <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+            <FacultyMethodology />
           </ProtectedRoute>
         )}
       />
