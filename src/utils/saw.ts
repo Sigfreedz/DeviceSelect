@@ -48,13 +48,13 @@ export const MOCK_WEIGHTS: Weights = {
 
 // Normalization helpers (higher = better, except price/weight)
 const normalize = {
-  price: (value: number, max: number) => 1 - value / max, // Lower price = higher score
+  price: (value: number, max: number) => Math.max(0, 1 - value / max), // Clamp to [0,1]
   ram: (value: number, max: number) => value / max,
   storage: (value: number, max: number) => value / max,
   battery: (value: number, max: number) => value / max,
-  weight: (value: number, max: number) => 1 - value / max, // Lighter = better
+  weight: (value: number, max: number) => Math.max(0, 1 - value / max), // ← CLAMPED: prevents negative scores
   gpu: (value: boolean) => (value ? 1 : 0),
-  os: (value: string, preferred: string) => (value === preferred ? 1 : 0.5), // Partial credit
+  os: (value: string, preferred: string) => (value === preferred ? 1 : 0.5),
 };
 
 // Max values for normalization (adjust based on your dataset range)
