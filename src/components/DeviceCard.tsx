@@ -4,6 +4,7 @@ import styles from '../styles/DeviceCard.module.css';
 export interface Device {
   id: number;
   name: string;
+  image_url?: string;
   specs: {
     cpu: string;
     ram: string;
@@ -27,7 +28,11 @@ const DeviceCard: React.FC<DeviceCardProps> = ({ device }) => {
   return (
     <div className={styles.card}>
       <div className={styles.imagePlaceholder}>
-        <span className={styles.laptopIcon}>💻</span>
+        {device.image_url ? (
+          <img className={styles.deviceImage} src={device.image_url} alt={device.name} loading="lazy" />
+        ) : (
+          <span className={styles.laptopIcon}>💻</span>
+        )}
         <div className={styles.badgeContainer}>
           <span className={`${styles.badge} ${badgeClass}`}>
             {device.badge.text}

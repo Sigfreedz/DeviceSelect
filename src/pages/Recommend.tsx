@@ -270,7 +270,13 @@ const Recommend: React.FC = () => {
               {!loading && recommendation && (
                 <div className={styles.recommendationCard}>
                   <div className={styles.cardHeader}>
-                    <div className={styles.recImage}>💻</div>
+                    <div className={styles.recImage}>
+                      {recommendation.image_url ? (
+                        <img className={styles.recImageMedia} src={recommendation.image_url} alt={recommendation.name} />
+                      ) : (
+                        <span className={styles.recImageIcon}>💻</span>
+                      )}
+                    </div>
                     <div className={styles.recBasicInfo}>
                       <span className={styles.recBrand}>{recommendation.brand}</span>
                       <h3 className={styles.recName}>{recommendation.name}</h3>
