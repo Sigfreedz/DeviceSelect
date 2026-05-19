@@ -194,7 +194,10 @@ const AdminAnalytics: React.FC = () => {
         if (commentVisibility === 'without_comment') return !hasComment;
         return true;
       })
-      .filter(row => (minimumRating ? row.rating !== null && row.rating >= minimumRating : true))
+      .filter(row => {
+        if (!minimumRating) return true;
+        return row.rating !== null && row.rating >= minimumRating;
+      })
       .filter(row => {
         if (!normalizedSearch) return true;
         return row.comment.toLowerCase().includes(normalizedSearch);
@@ -403,7 +406,9 @@ const AdminAnalytics: React.FC = () => {
                         <span className={styles.commentMeta}>
                           {row.created_at ? new Date(row.created_at).toLocaleDateString() : 'Unknown date'}
                         </span>
-                        <span className={styles.commentMeta}>{row.rating ? `${row.rating}/5` : 'Rating N/A'}</span>
+                        <span className={styles.commentMeta}>
+                          {row.rating !== null ? `${row.rating}/5` : 'Rating N/A'}
+                        </span>
                       </div>
                       <p className={styles.commentText}>{row.comment || 'No comment provided.'}</p>
                       <p className={styles.commentMeta}>
