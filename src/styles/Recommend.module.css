@@ -75,6 +75,7 @@
   align-items: center;
   gap: 15px;
   transition: all 0.3s ease;
+  min-height: 56px;
 }
 
 .optionBtn:hover {
@@ -241,6 +242,7 @@
   border-radius: 10px;
   font-weight: 700;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 .secondaryBtn {
@@ -251,6 +253,7 @@
   border-radius: 10px;
   font-weight: 700;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 .primaryBtn:hover {
@@ -269,10 +272,79 @@
 }
 
 @media (max-width: 768px) {
-  .container { padding: 30px; }
-  .optionsGrid { grid-template-columns: 1fr; }
-  .cardHeader { flex-direction: column; text-align: center; }
-  .recSpecs { grid-template-columns: 1fr; }
-  .actionGroup { flex-direction: column; }
-  .question { font-size: 1.8rem; }
+  .main {
+    padding: 64px 14px 32px;
+  }
+
+  .container {
+    padding: 28px 18px;
+    border-radius: 16px;
+  }
+
+  .optionsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .optionBtn {
+    padding: 16px;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .recommendationCard {
+    padding: 18px;
+  }
+
+  .recSpecs {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .actionGroup {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .question {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .resultTitle {
+    font-size: 1.9rem;
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 14px;
+  }
+
+  .question {
+    font-size: 1.55rem;
+  }
+
+  .optionIcon {
+    font-size: 1.6rem;
+  }
+
+  .optionPrice {
+    font-size: 1.2rem;
+  }
+
+  .recName {
+    font-size: 1.4rem;
+  }
+
+  .recPrice {
+    font-size: 1.3rem;
+  }
 }

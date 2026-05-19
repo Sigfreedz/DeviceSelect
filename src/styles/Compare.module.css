@@ -61,6 +61,7 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
+  min-height: 44px;
 }
 
 .pickerItem:hover:not(:disabled) {
@@ -90,6 +91,8 @@
 
 .tableWrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -100,6 +103,7 @@
   width: 100%;
   border-collapse: collapse;
   min-width: 800px;
+  table-layout: fixed;
 }
 
 .compareTable th, 
@@ -107,6 +111,9 @@
   padding: 20px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .stickyCol {
@@ -122,6 +129,9 @@
   font-weight: 600;
   color: var(--text-secondary);
   background: rgba(0, 0, 0, 0.2);
+  position: sticky;
+  left: 0;
+  z-index: 9;
 }
 
 .deviceHeader {
@@ -154,6 +164,7 @@
   font-size: 0.8rem;
   border: 1px solid rgba(255, 0, 0, 0.2);
   width: fit-content;
+  min-height: 40px;
 }
 
 .removeBtn:hover {
@@ -225,11 +236,61 @@
 }
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
+  .container {
+    padding: 24px 12px;
   }
-  
+
+  .title {
+    font-size: 1.9rem;
+  }
+
+  .selectionArea {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .devicePicker {
+    gap: 8px;
+  }
+
+  .pickerItem {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .compareTable th,
+  .compareTable td {
+    padding: 14px 10px;
+  }
+
+  .name {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
   .compareTable {
     font-size: 0.9rem;
+    min-width: 680px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .compareTable {
+    min-width: 620px;
+  }
+
+  .compareTable th,
+  .compareTable td {
+    padding: 12px 8px;
+    font-size: 0.84rem;
+    line-height: 1.35;
   }
 }

@@ -31,6 +31,7 @@
   border-radius: 6px;
   outline: none;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .checkboxGroup, .radioGroup {
@@ -55,6 +56,9 @@
 
 .checkboxLabel input, .radioLabel input {
   accent-color: var(--accent-violet);
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
 }
 
 .resetBtn {
@@ -66,10 +70,34 @@
   border-radius: 6px;
   font-weight: 600;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 .resetBtn:hover {
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    position: static;
+    top: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .checkboxLabel, .radioLabel {
+    min-height: 36px;
+    font-size: 0.88rem;
+  }
 }

@@ -269,7 +269,7 @@
     top: var(--nav-height);
     left: 0;
     right: 0;
-    z-index: 1250;
+    z-index: 1310;
     background: rgba(10, 15, 36, 0.98);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -298,12 +298,12 @@
     display: block;
     position: fixed;
     inset: var(--nav-height) 0 0;
-    z-index: 1200;
-    background: rgba(2, 6, 23, 0.55);
-    backdrop-filter: blur(2px);
+    z-index: 1290;
+    background: rgba(2, 6, 23, 0.72);
     border: none;
     padding: 0;
     margin: 0;
+    touch-action: none;
   }
 
   .navLinks {
@@ -318,7 +318,8 @@
 
   .navLinks a {
     width: 100%;
-    padding: 8px 4px;
+    padding: 10px 4px;
+    min-height: 48px;
   }
 
   .navAuth {
@@ -331,11 +332,13 @@
 
   .navAuth .loginBtn {
     width: 100%;
+    min-height: 48px;
   }
 
   .navAuth .signupBtn,
   .navAuth .logoutBtn {
     width: 100%;
+    min-height: 48px;
   }
 
   .portalMenuWrapper {
@@ -344,6 +347,7 @@
 
   .portalMenuButton {
     width: 100%;
+    min-height: 48px;
   }
 
   .portalMenu {
@@ -354,5 +358,20 @@
 
   .userInfo {
     align-items: flex-start;
+  }
+
+  .portalMenu a {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .mobileToggle {
+    min-height: 48px;
+    min-width: 48px;
   }
 }

@@ -191,6 +191,8 @@
   position: relative;
   width: 100%;
   padding-top: 56.25%;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .videoFrame {
@@ -241,7 +243,9 @@
   padding: 0.75rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .markdownBody :global(th) {
@@ -268,6 +272,7 @@
   padding: 10px 14px;
   font-weight: 700;
   font-size: 0.88rem;
+  min-height: 44px;
 }
 
 .completeButton,
@@ -362,5 +367,65 @@
 
   .headerMeta {
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 78px 12px 36px;
+  }
+
+  .header,
+  .thumbnailPanel,
+  .videoPanel,
+  .quickStart,
+  .markdownBody,
+  .sidebar,
+  .notFoundCard {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .header h1 {
+    font-size: 1.45rem;
+    line-height: 1.3;
+  }
+
+  .header p,
+  .markdownBody :global(p),
+  .markdownBody :global(li) {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .breadcrumbs {
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .completeButton,
+  .nextButton,
+  .backButton {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .markdownBody :global(table) {
+    min-width: 560px;
+  }
+}
+
+@media (max-width: 480px) {
+  .markdownBody :global(th),
+  .markdownBody :global(td) {
+    padding: 0.55rem 0.65rem;
+    font-size: 0.84rem;
   }
 }
