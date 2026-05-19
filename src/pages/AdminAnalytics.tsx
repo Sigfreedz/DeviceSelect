@@ -15,6 +15,7 @@ type PurchaseIntent = 'yes' | 'no' | 'maybe';
 interface FeedbackAnalyticsRow {
   id: string;
   rating: number | null;
+  comment: string;
   found_useful: boolean | null;
   most_useful_feature: MostUsefulFeature | null;
   recommendation_accuracy: number | null;
@@ -22,6 +23,11 @@ interface FeedbackAnalyticsRow {
   plan_to_purchase: PurchaseIntent | null;
   created_at: string | null;
 }
+
+type CommentVisibilityFilter = 'all' | 'with_comment' | 'without_comment';
+type CommentSortOrder = 'latest' | 'oldest';
+
+const COMMENTS_PAGE_SIZE = 10;
 
 const toMostUsefulFeature = (value: unknown): MostUsefulFeature | null => {
   if (value === 'recommendation' || value === 'compare' || value === 'lessons' || value === 'saved_devices') {
@@ -56,6 +62,11 @@ const AdminAnalytics: React.FC = () => {
   const [feedbackRows, setFeedbackRows] = useState<FeedbackAnalyticsRow[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [recommendationViews, setRecommendationViews] = useState(0);
+  const [commentVisibility, setCommentVisibility] = useState<CommentVisibilityFilter>('all');
+  const [minimumRating, setMinimumRating] = useState<number | null>(null);
+  const [commentSortOrder, setCommentSortOrder] = useState<CommentSortOrder>('latest');
+  const [commentSearch, setCommentSearch] = useState('');
+  const [visibleCommentCount, setVisibleCommentCount] = useState(COMMENTS_PAGE_SIZE);
 
   useEffect(() => {
     let isMounted = true;
@@ -69,7 +80,7 @@ const AdminAnalytics: React.FC = () => {
           supabase
             .from('feedback_responses')
             .select(
-              'id, rating, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
+              'id, rating, comment, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
             )
             .order('created_at', { ascending: false }),
           supabase.from('saved_devices').select('*', { count: 'exact', head: true }),
@@ -83,6 +94,7 @@ const AdminAnalytics: React.FC = () => {
         const normalizedRows = ((feedbackResult.data ?? []) as Array<Record<string, unknown>>).map(row => ({
           id: String(row.id ?? ''),
           rating: typeof row.rating === 'number' ? row.rating : null,
+          comment: typeof row.comment === 'string' ? row.comment.trim() : '',
           found_useful: typeof row.found_useful === 'boolean' ? row.found_useful : null,
           most_useful_feature: toMostUsefulFeature(row.most_useful_feature),
           recommendation_accuracy:
@@ -168,6 +180,35 @@ const AdminAnalytics: React.FC = () => {
       purchaseIntentCounts
     };
   }, [feedbackRows]);
+
+  useEffect(() => {
+    setVisibleCommentCount(COMMENTS_PAGE_SIZE);
+  }, [commentVisibility, minimumRating, commentSearch, commentSortOrder, feedbackRows.length]);
+
+  const filteredCommentRows = useMemo(() => {
+    const normalizedSearch = commentSearch.trim().toLowerCase();
+    const rows = feedbackRows
+      .filter(row => {
+        const hasComment = Boolean(row.comment);
+        if (commentVisibility === 'with_comment') return hasComment;
+        if (commentVisibility === 'without_comment') return !hasComment;
+        return true;
+      })
+      .filter(row => (minimumRating ? (row.rating ?? 0) >= minimumRating : true))
+      .filter(row => {
+        if (!normalizedSearch) return true;
+        return row.comment.toLowerCase().includes(normalizedSearch);
+      });
+
+    return rows.sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return commentSortOrder === 'latest' ? bTime - aTime : aTime - bTime;
+    });
+  }, [commentSearch, commentSortOrder, commentVisibility, feedbackRows, minimumRating]);
+
+  const visibleCommentRows = filteredCommentRows.slice(0, visibleCommentCount);
+  const hasMoreComments = filteredCommentRows.length > visibleCommentCount;
 
   const metricCards = [
     {
@@ -290,7 +331,108 @@ const AdminAnalytics: React.FC = () => {
           </section>
 
           <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Feedback Comments</h2>
+            <p className={styles.sectionDescription}>
+              Review full-text student feedback with optional filters for faster moderation and analysis.
+            </p>
+
+            <div className={styles.commentFilters}>
+              <label className={styles.profileFieldLabel}>
+                Visibility
+                <select
+                  className={styles.profileFieldSelect}
+                  value={commentVisibility}
+                  onChange={event => setCommentVisibility(event.target.value as CommentVisibilityFilter)}
+                >
+                  <option value="all">All responses</option>
+                  <option value="with_comment">With comments only</option>
+                  <option value="without_comment">No comment only</option>
+                </select>
+              </label>
+
+              <label className={styles.profileFieldLabel}>
+                Minimum rating
+                <select
+                  className={styles.profileFieldSelect}
+                  value={minimumRating ?? 'all'}
+                  onChange={event => {
+                    const next = event.target.value;
+                    setMinimumRating(next === 'all' ? null : Number(next));
+                  }}
+                >
+                  <option value="all">All ratings</option>
+                  <option value="5">5 and up</option>
+                  <option value="4">4 and up</option>
+                  <option value="3">3 and up</option>
+                  <option value="2">2 and up</option>
+                  <option value="1">1 and up</option>
+                </select>
+              </label>
+
+              <label className={styles.profileFieldLabel}>
+                Sort
+                <select
+                  className={styles.profileFieldSelect}
+                  value={commentSortOrder}
+                  onChange={event => setCommentSortOrder(event.target.value as CommentSortOrder)}
+                >
+                  <option value="latest">Latest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </label>
+
+              <label className={styles.profileFieldLabel}>
+                Search comment
+                <input
+                  className={styles.fieldInput}
+                  value={commentSearch}
+                  onChange={event => setCommentSearch(event.target.value)}
+                  placeholder="Search text in comments"
+                />
+              </label>
+            </div>
+
+            {filteredCommentRows.length === 0 ? (
+              <p className={styles.commentEmptyState}>No feedback comments match the current filters.</p>
+            ) : (
+              <>
+                <div className={styles.commentList}>
+                  {visibleCommentRows.map((row, index) => (
+                    <article className={styles.commentItem} key={row.id || `comment-row-${index}`}>
+                      <div className={styles.commentHeader}>
+                        <span className={styles.commentMeta}>
+                          {row.created_at ? new Date(row.created_at).toLocaleDateString() : 'Unknown date'}
+                        </span>
+                        <span className={styles.commentMeta}>{row.rating ? `${row.rating}/5` : 'Rating N/A'}</span>
+                      </div>
+                      <p className={styles.commentText}>{row.comment || 'No comment provided.'}</p>
+                      <p className={styles.commentMeta}>
+                        Useful: {row.found_useful === null ? 'N/A' : row.found_useful ? 'Yes' : 'No'} · Feature:{' '}
+                        {row.most_useful_feature ? featureLabelMap[row.most_useful_feature] : 'N/A'}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+                {hasMoreComments && (
+                  <div className={styles.sectionActions}>
+                    <button
+                      type="button"
+                      className={styles.inlineButton}
+                      onClick={() => setVisibleCommentCount(previous => previous + COMMENTS_PAGE_SIZE)}
+                    >
+                      Load More
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+
+          <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Recent Survey Responses</h2>
+            <p className={styles.sectionDescription}>
+              Structured snapshot of latest responses. Use the Feedback Comments section for full-text review.
+            </p>
             {feedbackRows.length === 0 ? (
               <p className={styles.sectionEmpty}>No survey responses yet.</p>
             ) : (
