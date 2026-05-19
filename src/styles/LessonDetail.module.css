@@ -45,10 +45,6 @@
   margin-bottom: 18px;
 }
 
-.tier {
-  display: inline-block;
-}
-
 .thumbnailPanel {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(15, 23, 42, 0.55);
@@ -111,6 +107,7 @@
 }
 
 .tier {
+  display: inline-block;
   border-radius: 999px;
   padding: 5px 11px;
   background: rgba(139, 92, 246, 0.16);

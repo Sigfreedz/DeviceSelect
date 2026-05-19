@@ -57,7 +57,6 @@ const Lessons: React.FC = () => {
         setLessons(data.map(normalizeLesson));
         setLoadError(null);
       }
-      setFailedThumbnails({});
 
       setIsLoading(false);
     };
