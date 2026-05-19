@@ -1,4 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import {
+  BarListChart,
+  ProgressRing,
+  StackedShareChart,
+  TrendSparkBars
+} from '../components/dashboard/DashboardCharts';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
 import { fetchInteractionEvents } from '../utils/interactionTracking';
@@ -194,6 +200,29 @@ const Admin: React.FC = () => {
     }
   ];
 
+  const activityTrend = useMemo(() => {
+    const labels = Array.from({ length: 7 }).map((_, index) => {
+      const day = new Date();
+      day.setHours(0, 0, 0, 0);
+      day.setDate(day.getDate() - (6 - index));
+      return {
+        key: day.toISOString().slice(0, 10),
+        label: day.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })
+      };
+    });
+    const counts = interactionLogs.reduce<Record<string, number>>((accumulator, log) => {
+      const date = new Date(log.created_at);
+      if (Number.isNaN(date.getTime())) return accumulator;
+      const key = date.toISOString().slice(0, 10);
+      accumulator[key] = (accumulator[key] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    return labels.map(label => ({
+      label: label.label,
+      value: counts[label.key] ?? 0
+    }));
+  }, [interactionLogs]);
+
   return (
     <DashboardLayout
       title="Admin Dashboard"
@@ -218,6 +247,43 @@ const Admin: React.FC = () => {
 
       {!isLoading && (
         <>
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Visual Snapshot</h2>
+            <div className={styles.analyticsGrid}>
+              <article className={styles.card}>
+                <StackedShareChart
+                  title="Role Distribution"
+                  points={[
+                    { label: 'Students', value: metrics.studentCount, color: '#8b5cf6' },
+                    { label: 'Faculty', value: metrics.facultyCount, color: '#06b6d4' },
+                    { label: 'Admins', value: metrics.adminCount, color: '#f59e0b' }
+                  ]}
+                />
+              </article>
+              <article className={styles.card}>
+                <ProgressRing
+                  title="Approval Rate"
+                  current={metrics.approvedUsers}
+                  total={Math.max(1, profiles.length)}
+                />
+              </article>
+              <article className={styles.card}>
+                <StackedShareChart
+                  title="Engagement Mix"
+                  points={[
+                    { label: 'Recommendation Views', value: metrics.recommendationViews, color: '#8b5cf6' },
+                    { label: 'Comparison Clicks', value: metrics.comparisonClicks, color: '#06b6d4' },
+                    { label: 'Saved Devices', value: savedCount, color: '#22c55e' },
+                    { label: 'Feedback', value: feedbackResponses.length, color: '#f59e0b' }
+                  ]}
+                />
+              </article>
+              <article className={styles.card}>
+                <TrendSparkBars title="Interaction Trend (7 days)" points={activityTrend} color="#8b5cf6" />
+              </article>
+            </div>
+          </section>
+
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Platform Health Snapshot</h2>
@@ -318,6 +384,26 @@ const Admin: React.FC = () => {
                 <div>
                   <h3 className={styles.savedTitle}>Top Student Track</h3>
                   <p className={styles.savedMeta}>{metrics.topTrack}</p>
+                </div>
+              </article>
+              <article className={styles.savedItem}>
+                <div className={styles.analyticsGrid}>
+                  <BarListChart
+                    title="Student Track Distribution"
+                    points={(
+                      Object.entries(
+                        profiles.reduce<Record<string, number>>((accumulator, profile) => {
+                          if (profile.role !== 'student' || !profile.it_track) return accumulator;
+                          accumulator[profile.it_track] = (accumulator[profile.it_track] ?? 0) + 1;
+                          return accumulator;
+                        }, {})
+                      ) as Array<[keyof typeof trackLabels, number]>
+                    ).map(([track, count]) => ({
+                      label: trackLabels[track] ?? track,
+                      value: count,
+                      color: '#8b5cf6'
+                    }))}
+                  />
                 </div>
               </article>
             </div>

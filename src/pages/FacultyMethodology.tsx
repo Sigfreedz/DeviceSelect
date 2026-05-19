@@ -26,6 +26,11 @@ const cards = [
 ];
 
 const FacultyMethodology: React.FC = () => {
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
     <DashboardLayout
       title="Methodology & SAW"
@@ -46,6 +51,17 @@ const FacultyMethodology: React.FC = () => {
       <div className={styles.note}>
         <strong>Reminder:</strong> Keep all methodology notes in sync with the latest SAW
         weights and NICTEF alignment tables.
+      </div>
+      <div className={styles.sectionActions}>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty')}>
+          Open Faculty Analytics
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/overview')}>
+          Open Faculty Overview
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/reports')}>
+          Open Reports
+        </button>
       </div>
     </DashboardLayout>
   );

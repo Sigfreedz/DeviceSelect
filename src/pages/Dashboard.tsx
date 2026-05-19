@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
+import {
+  BarListChart,
+  ProgressRing,
+  StackedShareChart,
+  TrendSparkBars
+} from '../components/dashboard/DashboardCharts';
 import FeedbackSurvey, { SurveyValues } from '../components/FeedbackSurvey';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -33,16 +39,27 @@ interface InteractionLog {
 }
 
 const MAX_SAVED_DEVICES = 3;
+const yearLevelOptions = ['1st', '2nd', '3rd', '4th', 'graduate'] as const;
+type YearLevel = (typeof yearLevelOptions)[number];
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile, updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [yearLevel, setYearLevel] = useState<YearLevel | ''>('');
+  const [isSavingYearLevel, setIsSavingYearLevel] = useState(false);
+  const [yearLevelMessage, setYearLevelMessage] = useState<string | null>(null);
+  const [yearLevelError, setYearLevelError] = useState<string | null>(null);
   const [savedDevices, setSavedDevices] = useState<SavedDevice[]>([]);
   const [interactionLogs, setInteractionLogs] = useState<InteractionLog[]>([]);
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
+
+  useEffect(() => {
+    const nextYearLevel = profile?.year_level && yearLevelOptions.includes(profile.year_level) ? profile.year_level : '';
+    setYearLevel(nextYearLevel);
+  }, [profile?.year_level]);
 
   useEffect(() => {
     let isMounted = true;
@@ -199,6 +216,55 @@ const Dashboard: React.FC = () => {
       latestActivity
     };
   }, [feedback, interactionLogs, savedDevices]);
+
+  const activityTrend = useMemo(() => {
+    const dailyLabels = Array.from({ length: 7 }).map((_, index) => {
+      const day = new Date();
+      day.setHours(0, 0, 0, 0);
+      day.setDate(day.getDate() - (6 - index));
+      return {
+        key: day.toISOString().slice(0, 10),
+        label: day.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })
+      };
+    });
+
+    const allEventDates = [
+      ...savedDevices.map(device => device.created_at),
+      ...interactionLogs.map(log => log.created_at),
+      ...(feedback?.created_at ? [feedback.created_at] : [])
+    ];
+
+    const counts = allEventDates.reduce<Record<string, number>>((accumulator, dateString) => {
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return accumulator;
+      const key = date.toISOString().slice(0, 10);
+      accumulator[key] = (accumulator[key] ?? 0) + 1;
+      return accumulator;
+    }, {});
+
+    return dailyLabels.map(day => ({
+      label: day.label,
+      value: counts[day.key] ?? 0
+    }));
+  }, [feedback?.created_at, interactionLogs, savedDevices]);
+
+  const yearLevelUnchanged = (profile?.year_level ?? '') === (yearLevel || '');
+
+  const handleYearLevelSave = async () => {
+    setYearLevelMessage(null);
+    setYearLevelError(null);
+    setIsSavingYearLevel(true);
+    const { error } = await updateProfile({
+      year_level: (yearLevel || null) as '1st' | '2nd' | '3rd' | '4th' | 'graduate' | null
+    });
+    setIsSavingYearLevel(false);
+
+    if (error) {
+      setYearLevelError(error);
+      return;
+    }
+    setYearLevelMessage('Year level updated.');
+  };
 
   const navigate = (path: string) => {
     window.history.pushState({}, '', path);
@@ -411,6 +477,93 @@ const Dashboard: React.FC = () => {
 
       {!isLoading && (
         <>
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Profile Settings</h2>
+            </div>
+            <div className={styles.profileSettingsRow}>
+              <label className={styles.profileFieldLabel} htmlFor="year-level-select">
+                Year Level
+              </label>
+              <select
+                id="year-level-select"
+                className={styles.profileFieldSelect}
+                value={yearLevel}
+                onChange={event => {
+                  setYearLevel(event.target.value as YearLevel | '');
+                  setYearLevelMessage(null);
+                  setYearLevelError(null);
+                }}
+              >
+                <option value="">Not set</option>
+                {yearLevelOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <p className={styles.savedMeta}>
+                Current profile value: <strong>{profile?.year_level ?? 'Not set'}</strong>
+              </p>
+              <button
+                type="button"
+                className={styles.inlineButton}
+                onClick={() => { void handleYearLevelSave(); }}
+                disabled={isSavingYearLevel || yearLevelUnchanged}
+              >
+                {isSavingYearLevel ? 'Saving...' : 'Save Year Level'}
+              </button>
+              {yearLevelMessage && <p className={styles.noteCompact}>{yearLevelMessage}</p>}
+              {yearLevelError && <p className={styles.noteCompact}>{yearLevelError}</p>}
+            </div>
+          </section>
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Activity Visualization</h2>
+            <div className={styles.analyticsGrid}>
+              <article className={styles.card}>
+                <StackedShareChart
+                  title="Activity Mix"
+                  meta={`${stats.trackedActions} tracked actions`}
+                  points={[
+                    { label: 'Recommendation Views', value: stats.recommendationViews, color: '#8b5cf6' },
+                    { label: 'Comparison Clicks', value: stats.comparisonClicks, color: '#a855f7' },
+                    { label: 'Saved Devices', value: stats.savedCount, color: '#22c55e' }
+                  ]}
+                />
+              </article>
+              <article className={styles.card}>
+                <ProgressRing
+                  title="Saved Device Progress"
+                  subtitle="Student shortlist completion"
+                  current={stats.savedCount}
+                  total={MAX_SAVED_DEVICES}
+                />
+              </article>
+              <article className={styles.card}>
+                <TrendSparkBars
+                  title="Recent Activity (7 days)"
+                  points={activityTrend}
+                />
+              </article>
+              <article className={styles.card}>
+                <BarListChart
+                  title="Survey Snapshot"
+                  points={[
+                    { label: 'Submitted', value: feedback ? 1 : 0, color: '#22c55e' },
+                    { label: 'Pending', value: feedback ? 0 : 1, color: '#f59e0b' },
+                    {
+                      label: 'Rating',
+                      value: feedback?.rating ?? 0,
+                      color: '#06b6d4'
+                    }
+                  ]}
+                  maxValue={5}
+                />
+              </article>
+            </div>
+          </section>
+
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Saved Devices (max {MAX_SAVED_DEVICES})</h2>

@@ -130,6 +130,12 @@
   margin-bottom: 12px;
 }
 
+.analyticsGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
 .sectionActions {
   display: flex;
   flex-wrap: wrap;
@@ -192,6 +198,32 @@
 
 .sectionEmpty {
   color: var(--text-secondary);
+}
+
+.profileSettingsRow {
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.profileFieldLabel {
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.profileFieldSelect {
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.noteCompact {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
 }
 
 .feedbackForm {

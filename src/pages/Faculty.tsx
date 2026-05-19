@@ -21,6 +21,11 @@ const cards = [
 ];
 
 const Faculty: React.FC = () => {
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
     <DashboardLayout
       title="Faculty Dashboard"
@@ -41,6 +46,17 @@ const Faculty: React.FC = () => {
       <div className={styles.note}>
         <strong>Research focus:</strong> Use the aggregated insights to validate device coverage
         across BSIT tracks before finalizing curriculum updates.
+      </div>
+      <div className={styles.sectionActions}>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty')}>
+          Open Faculty Analytics
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/reports')}>
+          Open Reports
+        </button>
+        <button type="button" className={styles.inlineButton} onClick={() => navigate('/faculty/methodology')}>
+          Open Methodology
+        </button>
       </div>
     </DashboardLayout>
   );
