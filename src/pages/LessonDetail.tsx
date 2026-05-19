@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -209,7 +210,7 @@ const LessonDetail: React.FC = () => {
               </div>
 
               <article className={styles.markdownBody}>
-                <ReactMarkdown>{lesson.content}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{lesson.content}</ReactMarkdown>
               </article>
 
               {user ? (
