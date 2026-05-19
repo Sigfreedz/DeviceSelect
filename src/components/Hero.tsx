@@ -63,12 +63,6 @@ const Hero: React.FC = () => {
             <span className={styles.statValue}>50+</span>
             <span className={styles.statLabel}>Devices Verified</span>
           </div>
-          <div className={styles.statDivider}></div>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>100%</span>
-            <span className={styles.statLabel}>Faculty Aligned</span>
-          </div>
-          <div className={styles.statDivider}></div>
           <div className={styles.statItem}>
             <span className={styles.statValue}>BSIT</span>
             <span className={styles.statLabel}>Specialized</span>
