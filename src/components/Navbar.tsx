@@ -47,8 +47,10 @@ const Navbar: React.FC = () => {
   const hasPortalAccess = hasFacultyAccess || hasStudentAccess;
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
+    const mobileViewport = window.matchMedia('(max-width: 768px)');
+
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -66,23 +68,23 @@ const Navbar: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    mobileViewport.addEventListener('change', handleViewportChange);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleEscape);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      mobileViewport.removeEventListener('change', handleViewportChange);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, []);
 
   useEffect(() => {
-    if (!isMobileMenuOpen || window.innerWidth > 768) {
+    if (!isMobileMenuOpen || !window.matchMedia('(max-width: 768px)').matches) {
       return;
     }
 
-    const { style: bodyStyle } = document.body;
-    const { style: rootStyle } = document.documentElement;
+    const bodyStyle = document.body.style;
+    const rootStyle = document.documentElement.style;
     const previousBodyOverflow = bodyStyle.overflow;
     const previousBodyOverscroll = bodyStyle.overscrollBehavior;
     const previousRootOverflow = rootStyle.overflow;
