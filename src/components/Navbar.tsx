@@ -5,6 +5,7 @@ import Logo from './Logo';
 import styles from '../styles/Navbar.module.css';
 
 type AuthMode = 'login' | 'signup';
+const MOBILE_BREAKPOINT_QUERY = '(max-width: 768px)';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ const Navbar: React.FC = () => {
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [isPortalMenuOpen, setIsPortalMenuOpen] = useState(false);
   const portalMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const { user, profile, isLoading, signOut } = useAuth();
 
   const navigate = (path: string) => (e: React.MouseEvent<HTMLElement>) => {
@@ -46,6 +48,14 @@ const Navbar: React.FC = () => {
   const hasPortalAccess = hasFacultyAccess || hasStudentAccess;
 
   useEffect(() => {
+    const mobileViewport = window.matchMedia(MOBILE_BREAKPOINT_QUERY);
+
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
     const handleClickOutside = (event: MouseEvent) => {
       if (!portalMenuRef.current) return;
       if (portalMenuRef.current.contains(event.target as Node)) return;
@@ -54,17 +64,49 @@ const Navbar: React.FC = () => {
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
         setIsPortalMenuOpen(false);
       }
     };
 
+    if (!mobileViewport.matches) {
+      setIsMobileMenuOpen(false);
+    }
+
+    mobileViewport.addEventListener('change', handleViewportChange);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleEscape);
     return () => {
+      mobileViewport.removeEventListener('change', handleViewportChange);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen || window.innerWidth > 768) {
+      return;
+    }
+
+    const bodyStyle = document.body.style;
+    const rootStyle = document.documentElement.style;
+    const previousBodyOverflow = bodyStyle.overflow;
+    const previousBodyOverscroll = bodyStyle.overscrollBehavior;
+    const previousRootOverflow = rootStyle.overflow;
+    const previousRootOverscroll = rootStyle.overscrollBehavior;
+
+    bodyStyle.overflow = 'hidden';
+    bodyStyle.overscrollBehavior = 'none';
+    rootStyle.overflow = 'hidden';
+    rootStyle.overscrollBehavior = 'none';
+
+    return () => {
+      bodyStyle.overflow = previousBodyOverflow;
+      bodyStyle.overscrollBehavior = previousBodyOverscroll;
+      rootStyle.overflow = previousRootOverflow;
+      rootStyle.overscrollBehavior = previousRootOverscroll;
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -76,14 +118,18 @@ const Navbar: React.FC = () => {
           <button
             className={styles.mobileToggle}
             type="button"
-            aria-label="Toggle navigation menu"
-            aria-controls="primary-navigation"
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-controls="primary-navigation-panel"
             aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen((open) => !open)}
           >
-            ☰
+            {isMobileMenuOpen ? '✕' : '☰'}
           </button>
-          <div className={`${styles.navMenu} ${isMobileMenuOpen ? styles.navMenuOpen : ''}`}>
+          <div
+            ref={mobileMenuRef}
+            id="primary-navigation-panel"
+            className={`${styles.navMenu} ${isMobileMenuOpen ? styles.navMenuOpen : ''}`}
+          >
             <ul className={styles.navLinks} id="primary-navigation">
               <li><a href="/" onClick={navigate('/')} className={currentPath === '/' ? styles.active : ''}>Home</a></li>
               <li><a href="/top-devices" onClick={navigate('/top-devices')} className={currentPath === '/top-devices' ? styles.active : ''}>Top Devices</a></li>
@@ -184,6 +230,14 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </nav>
+      {isMobileMenuOpen && (
+        <button
+          type="button"
+          className={styles.mobileMenuBackdrop}
+          aria-label="Close navigation menu"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
       {isAuthOpen && (
         <div className={styles.authOverlay} onClick={closeAuth}>
           <div
