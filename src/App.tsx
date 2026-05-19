@@ -32,7 +32,7 @@ const AuthGate: React.FC = () => (
         <div>
           <h1 className={styles.title}>Sign in required</h1>
           <p className={styles.subtitle}>
-            Log in with your PLV email to access this section of IT DeviceSelect.
+            Log in with your PLV email to access this section of DeviceLabs.
           </p>
         </div>
         <AuthForm initialMode="login" />

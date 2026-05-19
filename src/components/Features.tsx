@@ -6,17 +6,14 @@ const Features: React.FC = () => {
     {
       icon: '🎯',
       title: 'Personalized Recommendation',
-      description: 'Our logic engine analyzes your academic track and software requirements to suggest the most compatible devices.'
+      description: 'Our logic engine analyzes your academic track and software requirements to suggest the most compatible devices.',
+      href: '/recommend'
     },
     {
       icon: '📊',
       title: 'Device Comparison',
-      description: 'Compare technical specifications side-by-side, specifically focused on benchmarks relevant to IT workloads like virtualization and compilation.'
-    },
-    {
-      icon: '🛡️',
-      title: 'Faculty-Verified Standards',
-      description: 'All recommendations are aligned with the official BSIT curriculum and faculty-suggested hardware minimums.'
+      description: 'Compare technical specifications side-by-side, specifically focused on benchmarks relevant to IT workloads like virtualization and compilation.',
+      href: '/compare'
     }
   ];
 
@@ -33,7 +30,7 @@ const Features: React.FC = () => {
               <div className={styles.icon}>{feature.icon}</div>
               <h3 className={styles.cardTitle}>{feature.title}</h3>
               <p className={styles.cardDescription}>{feature.description}</p>
-              <a href={`#${feature.title.toLowerCase().replace(/\s+/g, '-')}`} className={styles.learnMore}>
+              <a href={feature.href} className={styles.learnMore}>
                 Learn more &rarr;
               </a>
             </div>

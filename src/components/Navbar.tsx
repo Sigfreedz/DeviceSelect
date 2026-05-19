@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from './AuthForm';
+import Logo from './Logo';
 import styles from '../styles/Navbar.module.css';
 
 type AuthMode = 'login' | 'signup';
@@ -69,9 +70,8 @@ const Navbar: React.FC = () => {
     <>
       <nav className={styles.navbar}>
         <div className={styles.navContainer}>
-          <div className={styles.logo} onClick={navigate('/')} style={{cursor: 'pointer'}}>
-            <span className={styles.logoIcon}>&#9671;</span>
-            <span className={styles.logoText}>IT DeviceSelect</span>
+          <div className={styles.logo} onClick={navigate('/')}>
+            <Logo size="medium" />
           </div>
           <button
             className={styles.mobileToggle}
@@ -90,8 +90,6 @@ const Navbar: React.FC = () => {
               <li><a href="/recommend" onClick={navigate('/recommend')} className={currentPath === '/recommend' ? styles.active : ''}>Recommend</a></li>
               <li><a href="/compare" onClick={navigate('/compare')} className={currentPath === '/compare' ? styles.active : ''}>Compare</a></li>
               <li><a href="/lessons" onClick={navigate('/lessons')} className={(currentPath === '/lessons' || currentPath.startsWith('/lessons/') || currentPath === '/guides') ? styles.active : ''}>Lessons</a></li>
-              <li><a href="/standards" onClick={navigate('/standards')} className={currentPath === '/standards' ? styles.active : ''}>Standards</a></li>
-              <li><a href="/about" onClick={navigate('/about')} className={currentPath === '/about' ? styles.active : ''}>About</a></li>
             </ul>
             <div className={styles.navAuth}>
               {user ? (
