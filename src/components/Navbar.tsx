@@ -5,6 +5,7 @@ import Logo from './Logo';
 import styles from '../styles/Navbar.module.css';
 
 type AuthMode = 'login' | 'signup';
+const MOBILE_BREAKPOINT_QUERY = '(max-width: 768px)';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -47,7 +48,7 @@ const Navbar: React.FC = () => {
   const hasPortalAccess = hasFacultyAccess || hasStudentAccess;
 
   useEffect(() => {
-    const mobileViewport = window.matchMedia('(max-width: 768px)');
+    const mobileViewport = window.matchMedia(MOBILE_BREAKPOINT_QUERY);
 
     const handleViewportChange = (event: MediaQueryListEvent) => {
       if (!event.matches) {
@@ -79,7 +80,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMobileMenuOpen || !window.matchMedia('(max-width: 768px)').matches) {
+    if (!isMobileMenuOpen || !window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches) {
       return;
     }
 
