@@ -90,8 +90,6 @@ const Navbar: React.FC = () => {
               <li><a href="/recommend" onClick={navigate('/recommend')} className={currentPath === '/recommend' ? styles.active : ''}>Recommend</a></li>
               <li><a href="/compare" onClick={navigate('/compare')} className={currentPath === '/compare' ? styles.active : ''}>Compare</a></li>
               <li><a href="/lessons" onClick={navigate('/lessons')} className={(currentPath === '/lessons' || currentPath.startsWith('/lessons/') || currentPath === '/guides') ? styles.active : ''}>Lessons</a></li>
-              <li><a href="/standards" onClick={navigate('/standards')} className={currentPath === '/standards' ? styles.active : ''}>Standards</a></li>
-              <li><a href="/about" onClick={navigate('/about')} className={currentPath === '/about' ? styles.active : ''}>About</a></li>
             </ul>
             <div className={styles.navAuth}>
               {user ? (
