@@ -112,16 +112,16 @@ export const BarListChart: React.FC<{
       <p className={styles.title}>{title}</p>
       <div className={styles.barList}>
         {normalizedPoints.map(point => {
-          const width =
-            computedMaxValue > 0 ? Math.max(8, Math.round((point.value / computedMaxValue) * 100)) : 0;
+          const width = computedMaxValue > 0 ? Math.round((point.value / computedMaxValue) * 100) : 0;
+          const clampedWidth = point.value > 0 ? Math.min(100, Math.max(8, width)) : 0;
           return (
             <div key={point.label} className={styles.barRow}>
               <div className={styles.barTop}>
-                <p className={styles.barLabel}>{point.label}</p>
+                <p className={styles.barLabel} title={point.label}>{point.label}</p>
                 <p className={styles.barValue}>{point.value}</p>
               </div>
               <div className={styles.barTrack}>
-                <span className={styles.barFill} style={{ width: `${width}%`, background: point.color }} />
+                <span className={styles.barFill} style={{ width: `${clampedWidth}%`, background: point.color }} />
               </div>
             </div>
           );

@@ -1,6 +1,7 @@
 .panel {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .header {
@@ -96,15 +97,20 @@
 }
 
 .barTop {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 8px;
+  min-width: 0;
 }
 
 .barLabel {
   color: var(--text-secondary);
   font-size: 0.85rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .barValue {
@@ -114,6 +120,9 @@
 }
 
 .barTrack {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   height: 10px;
   border-radius: 999px;
   border: 1px solid var(--card-border);
