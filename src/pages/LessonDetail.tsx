@@ -38,6 +38,7 @@ const LessonDetail: React.FC = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [thumbnailFailed, setThumbnailFailed] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -50,6 +51,7 @@ const LessonDetail: React.FC = () => {
 
       setIsLoading(true);
       setActionMessage(null);
+      setThumbnailFailed(false);
 
       const { data, error } = await supabase.from('lessons').select('*').eq('slug', slug).maybeSingle();
       const resolvedLesson = !error && data ? normalizeLesson(data) : LESSONS_SEED.find((entry) => entry.slug === slug) ?? null;
@@ -180,6 +182,25 @@ const LessonDetail: React.FC = () => {
               {isCompleted && <span className={styles.mastery}>Mastered</span>}
             </div>
           </header>
+
+          <section className={styles.thumbnailPanel}>
+            <h2>Lesson Cover</h2>
+            <div className={styles.thumbnailWrap}>
+              {lesson.thumbnail_url && !thumbnailFailed ? (
+                <img
+                  src={lesson.thumbnail_url}
+                  alt={`${lesson.title} thumbnail`}
+                  className={styles.thumbnailImage}
+                  onError={() => setThumbnailFailed(true)}
+                />
+              ) : (
+                <div className={styles.thumbnailPlaceholder} aria-label={`${lesson.title} branded placeholder`}>
+                  <span className={styles.placeholderBadge}>DeviceSelect</span>
+                  <strong>{lesson.title}</strong>
+                </div>
+              )}
+            </div>
+          </section>
 
           <div className={styles.layout}>
             <section className={styles.contentColumn}>

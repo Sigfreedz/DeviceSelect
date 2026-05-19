@@ -35,6 +35,7 @@ const Lessons: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
+  const [failedThumbnails, setFailedThumbnails] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let isMounted = true;
@@ -56,6 +57,7 @@ const Lessons: React.FC = () => {
         setLessons(data.map(normalizeLesson));
         setLoadError(null);
       }
+      setFailedThumbnails({});
 
       setIsLoading(false);
     };
@@ -146,6 +148,26 @@ const Lessons: React.FC = () => {
 
                       return (
                         <article key={lesson.id} className={styles.lessonCard}>
+                          <div className={styles.thumbnailWrap}>
+                            {lesson.thumbnail_url && !failedThumbnails[lesson.id] ? (
+                              <img
+                                src={lesson.thumbnail_url}
+                                alt={`${lesson.title} thumbnail`}
+                                className={styles.thumbnailImage}
+                                onError={() =>
+                                  setFailedThumbnails((prev) => ({
+                                    ...prev,
+                                    [lesson.id]: true
+                                  }))
+                                }
+                              />
+                            ) : (
+                              <div className={styles.thumbnailPlaceholder} aria-label={`${lesson.title} branded placeholder`}>
+                                <span className={styles.placeholderBadge}>DeviceSelect</span>
+                                <strong>{lesson.title}</strong>
+                              </div>
+                            )}
+                          </div>
                           <div className={styles.cardMeta}>
                             <span>Module {lesson.order_index}</span>
                             {user && isCompleted && <span className={styles.completeBadge}>Completed</span>}
