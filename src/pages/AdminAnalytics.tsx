@@ -8,6 +8,7 @@ type MostUsefulFeature = 'recommendation' | 'compare' | 'lessons' | 'saved_devic
 type PurchaseIntent = 'yes' | 'no' | 'maybe';
 
 interface FeedbackAnalyticsRow {
+  id: string;
   rating: number | null;
   found_useful: boolean | null;
   most_useful_feature: MostUsefulFeature | null;
@@ -63,7 +64,7 @@ const AdminAnalytics: React.FC = () => {
           supabase
             .from('feedback_responses')
             .select(
-              'rating, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
+              'id, rating, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
             )
             .order('created_at', { ascending: false }),
           supabase.from('saved_devices').select('*', { count: 'exact', head: true }),
@@ -75,6 +76,7 @@ const AdminAnalytics: React.FC = () => {
         if (!isMounted) return;
 
         const normalizedRows = ((feedbackResult.data ?? []) as Array<Record<string, unknown>>).map(row => ({
+          id: String(row.id ?? ''),
           rating: typeof row.rating === 'number' ? row.rating : null,
           found_useful: typeof row.found_useful === 'boolean' ? row.found_useful : null,
           most_useful_feature: toMostUsefulFeature(row.most_useful_feature),
@@ -288,7 +290,7 @@ const AdminAnalytics: React.FC = () => {
                   <span>Most Useful Feature</span>
                 </div>
                 {feedbackRows.slice(0, 10).map((row, index) => (
-                  <div className={styles.responseTableRow} key={`${row.created_at ?? 'unknown'}-${index}`}>
+                  <div className={styles.responseTableRow} key={row.id || `row-${index}`}>
                     <span>{row.created_at ? new Date(row.created_at).toLocaleDateString() : 'Unknown'}</span>
                     <span>{row.rating ? `${row.rating}/5` : 'N/A'}</span>
                     <span>{row.found_useful === null ? 'N/A' : row.found_useful ? 'Yes' : 'No'}</span>
