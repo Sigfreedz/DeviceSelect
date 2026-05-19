@@ -14,6 +14,7 @@ interface TopDevice {
   id: number;
   name: string;
   brand: string;
+  image_url?: string;
   specs: {
     cpu: string;
     ram: string;
@@ -111,6 +112,7 @@ const normalizeDevice = (device: RawDevice, fallbackId: number): TopDevice => {
     id,
     name,
     brand,
+    image_url: device.image_url ?? undefined,
     price,
     category,
     portability,
