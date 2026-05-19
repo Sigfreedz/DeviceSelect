@@ -8,6 +8,9 @@ export interface ChartPoint {
 }
 
 const defaultColors = ['#8b5cf6', '#a855f7', '#22c55e', '#f59e0b', '#06b6d4', '#ef4444'];
+const MIN_BAR_WIDTH_PERCENT = 8;
+const MIN_SPARK_BAR_HEIGHT_PX = 8;
+const MAX_SPARK_BAR_HEIGHT_PX = 60;
 
 const safeNumber = (value: number) => (Number.isFinite(value) && value > 0 ? value : 0);
 
@@ -113,7 +116,8 @@ export const BarListChart: React.FC<{
       <div className={styles.barList}>
         {normalizedPoints.map(point => {
           const width = computedMaxValue > 0 ? Math.round((point.value / computedMaxValue) * 100) : 0;
-          const clampedWidth = point.value > 0 ? Math.min(100, Math.max(8, width)) : 0;
+          const clampedWidth =
+            point.value > 0 ? Math.min(100, Math.max(MIN_BAR_WIDTH_PERCENT, width)) : 0;
           return (
             <div key={point.label} className={styles.barRow}>
               <div className={styles.barTop}>
@@ -147,7 +151,10 @@ export const TrendSparkBars: React.FC<{
       <p className={styles.title}>{title}</p>
       <div className={styles.spark} role="img" aria-label={title}>
         {normalizedPoints.map(point => {
-          const barHeight = maxValue > 0 ? Math.max(8, Math.round((point.value / maxValue) * 60)) : 8;
+          const barHeight =
+            maxValue > 0
+              ? Math.max(MIN_SPARK_BAR_HEIGHT_PX, Math.round((point.value / maxValue) * MAX_SPARK_BAR_HEIGHT_PX))
+              : MIN_SPARK_BAR_HEIGHT_PX;
           return (
             <div key={point.label} className={styles.sparkBarWrap} title={`${point.label}: ${point.value}`}>
               <span className={styles.sparkBar} style={{ height: `${barHeight}px`, background: color }} />
