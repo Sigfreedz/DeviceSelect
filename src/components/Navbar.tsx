@@ -69,6 +69,10 @@ const Navbar: React.FC = () => {
       }
     };
 
+    if (!mobileViewport.matches) {
+      setIsMobileMenuOpen(false);
+    }
+
     mobileViewport.addEventListener('change', handleViewportChange);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleEscape);
@@ -80,7 +84,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMobileMenuOpen || !window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches) {
+    if (!isMobileMenuOpen || window.innerWidth > 768) {
       return;
     }
 
