@@ -2,8 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BarListChart,
   ProgressRing,
-  StackedShareChart,
-  TrendSparkBars
+  StackedShareChart
 } from '../components/dashboard/DashboardCharts';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
@@ -288,33 +287,6 @@ const FacultyDashboard: React.FC = () => {
     };
   }, [filteredTopDevices]);
 
-  const interactionTrend = useMemo(() => {
-    const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 14;
-    const dayLabels = Array.from({ length: days }).map((_, index) => {
-      const day = new Date();
-      day.setHours(0, 0, 0, 0);
-      day.setDate(day.getDate() - (days - 1 - index));
-      return {
-        key: day.toISOString().slice(0, 10),
-        label: day.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })
-      };
-    });
-
-    const counts = filteredInteractionEvents.reduce<Record<string, number>>((accumulator, event) => {
-      const eventDate = new Date(event.created_at);
-      if (Number.isNaN(eventDate.getTime())) return accumulator;
-      const key = eventDate.toISOString().slice(0, 10);
-      accumulator[key] = (accumulator[key] ?? 0) + 1;
-      return accumulator;
-    }, {});
-
-    return dayLabels.map((day, index) => ({
-      label: days > 14 ? `${index + 1}` : day.label,
-      value: counts[day.key] ?? 0,
-      color: '#a855f7'
-    }));
-  }, [dateRange, filteredInteractionEvents]);
-
   const conversionRate =
     filteredInteractionCounts.recommendation_view > 0
       ? Math.min(
@@ -437,9 +409,6 @@ const FacultyDashboard: React.FC = () => {
                   color: '#8b5cf6'
                 }))}
               />
-            </article>
-            <article className={styles.card}>
-              <TrendSparkBars title="Interaction Trend" points={interactionTrend} color="#a855f7" />
             </article>
             <article className={styles.card}>
               <BarListChart title="Rating Distribution" points={ratingDistribution} maxValue={Math.max(1, ratings.length)} />

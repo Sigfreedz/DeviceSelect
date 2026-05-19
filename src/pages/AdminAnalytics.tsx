@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   BarListChart,
   ProgressRing,
-  StackedShareChart,
-  TrendSparkBars
+  StackedShareChart
 } from '../components/dashboard/DashboardCharts';
 import DashboardLayout from '../components/DashboardLayout';
 import { supabase } from '../lib/supabase';
@@ -214,14 +213,6 @@ const AdminAnalytics: React.FC = () => {
     value: metrics.purchaseIntentCounts[intent],
     color: intent === 'yes' ? '#22c55e' : intent === 'maybe' ? '#f59e0b' : '#ef4444'
   }));
-  const feedbackTrend = feedbackRows
-    .slice(0, 10)
-    .reverse()
-    .map((row, index) => ({
-      label: row.created_at ? new Date(row.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : `R${index + 1}`,
-      value: row.rating && row.rating >= 1 && row.rating <= 5 ? row.rating : 0
-    }));
-
   return (
     <DashboardLayout
       title="Analytics & Research"
@@ -249,9 +240,6 @@ const AdminAnalytics: React.FC = () => {
                   total={100}
                   subtitle={`${metrics.usefulPercent}% marked as useful`}
                 />
-              </article>
-              <article className={styles.card}>
-                <TrendSparkBars title="Recent Ratings (latest 10)" points={feedbackTrend} color="#06b6d4" />
               </article>
             </div>
           </section>
