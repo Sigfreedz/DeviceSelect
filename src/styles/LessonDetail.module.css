@@ -114,6 +114,10 @@
   font-size: 1.1rem;
 }
 
+.markdownBody {
+  overflow-x: auto;
+}
+
 .videoPlaceholder {
   border: 1px dashed rgba(255, 255, 255, 0.3);
   border-radius: 12px;
@@ -164,7 +168,8 @@
 }
 
 .markdownBody :global(table) {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   margin: 1.25rem 0;
   background: rgba(15, 23, 42, 0.55);
@@ -175,6 +180,7 @@
   padding: 0.75rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: left;
+  white-space: nowrap;
 }
 
 .markdownBody :global(th) {
