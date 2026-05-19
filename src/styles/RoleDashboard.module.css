@@ -212,3 +212,102 @@
   padding: 12px;
   font: inherit;
 }
+
+.surveyProgress {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.16);
+  color: #e9d5ff;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.surveyStep {
+  display: grid;
+  gap: 10px;
+}
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.radioOption {
+  border: 1px solid var(--card-border);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 600;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.radioOption[aria-pressed='true'] {
+  border-color: rgba(139, 92, 246, 0.8);
+  background: rgba(139, 92, 246, 0.24);
+}
+
+.scaleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.analyticsBarRow {
+  display: grid;
+  gap: 8px;
+}
+
+.analyticsBarTrack {
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.analyticsBarFill {
+  display: block;
+  height: 100%;
+  min-width: 8px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+}
+
+.responseTable {
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.responseTableHeader,
+.responseTableRow {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 0.8fr 1.4fr;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.responseTableHeader {
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.responseTableRow {
+  border-top: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .responseTableHeader,
+  .responseTableRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}

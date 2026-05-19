@@ -178,7 +178,7 @@ const Admin: React.FC = () => {
       title: 'Feedback Responses',
       meta: 'Research',
       value: `${feedbackResponses.length}`,
-      description: 'One-response-per-student satisfaction submissions.'
+      description: 'Multi-question survey submissions from student respondents.'
     },
     {
       title: 'Average Rating',
