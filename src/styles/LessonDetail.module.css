@@ -1,0 +1,275 @@
+.main {
+  min-height: calc(100vh - var(--nav-height));
+  padding: 90px 20px 60px;
+  background: var(--gradient-main);
+}
+
+.loading {
+  min-height: calc(100vh - var(--nav-height));
+  padding: 120px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #94a3b8;
+  font-size: 0.86rem;
+}
+
+.breadcrumbs a {
+  color: #c4b5fd;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.header {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.tier {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 5px 11px;
+  background: rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  color: #d8b4fe;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 10px 0 10px;
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.header p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.mastery {
+  color: #34d399;
+  font-weight: 700;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+  align-items: start;
+}
+
+.contentColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.videoPanel,
+.quickStart,
+.markdownBody,
+.sidebar,
+.notFoundCard {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.videoPanel h2,
+.quickStart h2 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.videoPlaceholder {
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 22px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.videoFrameWrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+.videoFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 12px;
+}
+
+.quickStart ol {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.markdownBody :global(h2),
+.markdownBody :global(h3) {
+  color: #fff;
+}
+
+.markdownBody :global(p),
+.markdownBody :global(li) {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.markdownBody :global(strong) {
+  color: #e2e8f0;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.completeButton,
+.nextButton,
+.backButton {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.completeButton,
+.backButton {
+  background: var(--accent-violet);
+  color: #fff;
+  cursor: pointer;
+}
+
+.completeButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.nextButton {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  text-decoration: none;
+}
+
+.authHint,
+.actionMessage {
+  margin: 0;
+  color: #a5b4fc;
+}
+
+.sidebar {
+  position: sticky;
+  top: 84px;
+}
+
+.sidebar h3 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar li {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.sidebar li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.sidebar li span {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.sidebar li strong {
+  color: #e2e8f0;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.activeLesson {
+  border-color: rgba(139, 92, 246, 0.45) !important;
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.notFoundCard h1 {
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .headerMeta {
+    align-items: flex-start;
+  }
+}

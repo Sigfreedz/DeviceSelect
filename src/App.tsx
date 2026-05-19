@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import TopDevices from './pages/TopDevices';
 import Recommend from './pages/Recommend';
 import Compare from './pages/Compare';
-import Guides from './pages/Guides';
+import Lessons from './pages/Lessons';
+import LessonDetail from './pages/LessonDetail';
 import Dashboard from './pages/Dashboard';
 import FacultyDashboard from './pages/FacultyDashboard';
 import Admin from './pages/Admin';
@@ -62,15 +64,10 @@ const roleLanding: Record<Role, string> = {
 
 const AccessDenied: React.FC = () => {
   const { profile } = useAuth();
+  const navigate = useNavigate();
   const role = isRole(profile?.role) ? profile?.role : null;
   const destination = role ? roleLanding[role] : '/';
   const buttonLabel = role ? 'Go to your portal' : 'Return to home';
-  const ariaLabel = role ? 'Go to your role dashboard' : 'Return to the home page';
-
-  const handleNavigate = () => {
-    window.history.pushState({}, '', destination);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
 
   return (
     <div className="app-container">
@@ -85,12 +82,7 @@ const AccessDenied: React.FC = () => {
                 : 'Your profile is still pending a valid role assignment.'}
             </p>
           </div>
-          <button
-            className={styles.actionButton}
-            type="button"
-            onClick={handleNavigate}
-            aria-label={ariaLabel}
-          >
+          <button className={styles.actionButton} type="button" onClick={() => navigate(destination)}>
             {buttonLabel}
           </button>
         </div>
@@ -124,107 +116,96 @@ const ProtectedRoute: React.FC<{
   return children;
 };
 
+const HomePage: React.FC = () => (
+  <div className="app-container">
+    <Navbar />
+    <main>
+      <Hero />
+      <Features />
+    </main>
+    <footer>
+      <div className="footer-content">
+        <p>&copy; 2026 Web-Based Device Selection Platform for IT Students. All rights reserved.</p>
+        <p>Designed for BSIT Academic Excellence.</p>
+      </div>
+    </footer>
+  </div>
+);
+
 const AppContent: React.FC = () => {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
-    };
-
-    handleLocationChange();
-    window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
-  }, []);
-
-  const normalizedPath = currentPath.replace(/\/+$/, '') || '/';
-
-  if (normalizedPath === '/recommend') {
-    return <Recommend />;
-  }
-
-  if (normalizedPath === '/guides') {
-    return <Guides />;
-  }
-
-  if (normalizedPath === '/top-devices') {
-    return (
-      <ProtectedRoute>
-        <TopDevices />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/compare') {
-    return (
-      <ProtectedRoute>
-        <Compare />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/dashboard') {
-    return (
-      <ProtectedRoute allowedRoles={['student']}>
-        <Dashboard />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/faculty') {
-    return (
-      <ProtectedRoute allowedRoles={['faculty', 'admin']}>
-        <FacultyDashboard />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/admin') {
-    return (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <Admin />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/admin/devices') {
-    return (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AdminDevices />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/admin/analytics') {
-    return (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AdminAnalytics />
-      </ProtectedRoute>
-    );
-  }
-
-  if (normalizedPath === '/admin/users') {
-    return (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AdminUsers />
-      </ProtectedRoute>
-    );
-  }
-
   return (
-    <div className="app-container">
-      <Navbar />
-      <main>
-        <Hero />
-        <Features />
-      </main>
-      <footer>
-        <div className="footer-content">
-          <p>&copy; 2026 Web-Based Device Selection Platform for IT Students. All rights reserved.</p>
-          <p>Designed for BSIT Academic Excellence.</p>
-        </div>
-      </footer>
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/recommend" element={<Recommend />} />
+      <Route path="/lessons" element={<Lessons />} />
+      <Route path="/lessons/:slug" element={<LessonDetail />} />
+      <Route path="/guides" element={<Navigate to="/lessons" replace />} />
+      <Route
+        path="/top-devices"
+        element={(
+          <ProtectedRoute>
+            <TopDevices />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/compare"
+        element={(
+          <ProtectedRoute>
+            <Compare />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/dashboard"
+        element={(
+          <ProtectedRoute allowedRoles={['student']}>
+            <Dashboard />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/faculty"
+        element={(
+          <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+            <FacultyDashboard />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/admin"
+        element={(
+          <ProtectedRoute allowedRoles={['admin']}>
+            <Admin />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/admin/devices"
+        element={(
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDevices />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/admin/analytics"
+        element={(
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminAnalytics />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/admin/users"
+        element={(
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminUsers />
+          </ProtectedRoute>
+        )}
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 
