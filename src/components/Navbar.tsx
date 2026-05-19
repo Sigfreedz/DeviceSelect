@@ -41,6 +41,8 @@ const Navbar: React.FC = () => {
   const currentPath = window.location.pathname;
   const hasFacultyAccess = profile?.role === 'faculty' || profile?.role === 'admin';
   const hasAdminAccess = profile?.role === 'admin';
+  const hasStudentAccess = profile?.role === 'student';
+  const hasPortalAccess = hasFacultyAccess || hasStudentAccess;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,7 +96,7 @@ const Navbar: React.FC = () => {
             <div className={styles.navAuth}>
               {user ? (
                 <>
-                  {hasFacultyAccess && (
+                  {hasPortalAccess && (
                     <div className={styles.portalMenuWrapper} ref={portalMenuRef}>
                       <button
                         type="button"
@@ -107,16 +109,30 @@ const Navbar: React.FC = () => {
                       </button>
                       {isPortalMenuOpen && (
                         <ul className={styles.portalMenu} role="menu" aria-label="Role dashboards">
-                          <li role="none">
-                            <a
-                              role="menuitem"
-                              href="/faculty"
-                              onClick={navigate('/faculty')}
-                              className={currentPath === '/faculty' ? styles.activePortalLink : ''}
-                            >
-                              Faculty Dashboard
-                            </a>
-                          </li>
+                          {hasStudentAccess && (
+                            <li role="none">
+                              <a
+                                role="menuitem"
+                                href="/dashboard"
+                                onClick={navigate('/dashboard')}
+                                className={currentPath === '/dashboard' ? styles.activePortalLink : ''}
+                              >
+                                Student Dashboard
+                              </a>
+                            </li>
+                          )}
+                          {hasFacultyAccess && (
+                            <li role="none">
+                              <a
+                                role="menuitem"
+                                href="/faculty"
+                                onClick={navigate('/faculty')}
+                                className={currentPath === '/faculty' ? styles.activePortalLink : ''}
+                              >
+                                Faculty Dashboard
+                              </a>
+                            </li>
+                          )}
                           {hasAdminAccess && (
                             <li role="none">
                               <a
