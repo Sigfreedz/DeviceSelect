@@ -27,7 +27,7 @@ interface FeedbackAnalyticsRow {
 type CommentVisibilityFilter = 'all' | 'with_comment' | 'without_comment';
 type CommentSortOrder = 'latest' | 'oldest';
 
-const COMMENTS_PAGE_SIZE = 10;
+const COMMENTS_BATCH_SIZE = 10;
 
 const toMostUsefulFeature = (value: unknown): MostUsefulFeature | null => {
   if (value === 'recommendation' || value === 'compare' || value === 'lessons' || value === 'saved_devices') {
@@ -66,7 +66,7 @@ const AdminAnalytics: React.FC = () => {
   const [minimumRating, setMinimumRating] = useState<number | null>(null);
   const [commentSortOrder, setCommentSortOrder] = useState<CommentSortOrder>('latest');
   const [commentSearch, setCommentSearch] = useState('');
-  const [visibleCommentCount, setVisibleCommentCount] = useState(COMMENTS_PAGE_SIZE);
+  const [visibleCommentCount, setVisibleCommentCount] = useState(COMMENTS_BATCH_SIZE);
 
   useEffect(() => {
     let isMounted = true;
@@ -182,8 +182,8 @@ const AdminAnalytics: React.FC = () => {
   }, [feedbackRows]);
 
   useEffect(() => {
-    setVisibleCommentCount(COMMENTS_PAGE_SIZE);
-  }, [commentVisibility, minimumRating, commentSearch, commentSortOrder, feedbackRows.length]);
+    setVisibleCommentCount(COMMENTS_BATCH_SIZE);
+  }, [commentVisibility, minimumRating, commentSearch, commentSortOrder, feedbackRows]);
 
   const filteredCommentRows = useMemo(() => {
     const normalizedSearch = commentSearch.trim().toLowerCase();
@@ -194,7 +194,7 @@ const AdminAnalytics: React.FC = () => {
         if (commentVisibility === 'without_comment') return !hasComment;
         return true;
       })
-      .filter(row => (minimumRating ? (row.rating ?? 0) >= minimumRating : true))
+      .filter(row => (minimumRating ? row.rating !== null && row.rating >= minimumRating : true))
       .filter(row => {
         if (!normalizedSearch) return true;
         return row.comment.toLowerCase().includes(normalizedSearch);
@@ -418,7 +418,7 @@ const AdminAnalytics: React.FC = () => {
                     <button
                       type="button"
                       className={styles.inlineButton}
-                      onClick={() => setVisibleCommentCount(previous => previous + COMMENTS_PAGE_SIZE)}
+                      onClick={() => setVisibleCommentCount(previous => previous + COMMENTS_BATCH_SIZE)}
                     >
                       Load More
                     </button>
