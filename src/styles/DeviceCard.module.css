@@ -92,8 +92,7 @@
 .specText {
   font-size: 0.85rem;
   color: var(--text-secondary);
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .footer {
