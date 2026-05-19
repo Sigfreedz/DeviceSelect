@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from './AuthForm';
+import Logo from './Logo';
 import styles from '../styles/Navbar.module.css';
 
 type AuthMode = 'login' | 'signup';
@@ -69,9 +70,8 @@ const Navbar: React.FC = () => {
     <>
       <nav className={styles.navbar}>
         <div className={styles.navContainer}>
-          <div className={styles.logo} onClick={navigate('/')} style={{cursor: 'pointer'}}>
-            <span className={styles.logoIcon}>&#9671;</span>
-            <span className={styles.logoText}>IT DeviceSelect</span>
+          <div className={styles.logo} onClick={navigate('/')}>
+            <Logo size="medium" />
           </div>
           <button
             className={styles.mobileToggle}
