@@ -245,7 +245,6 @@
   text-align: left;
   white-space: normal;
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 .markdownBody :global(th) {
