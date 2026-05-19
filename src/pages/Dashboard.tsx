@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
+import FeedbackSurvey, { SurveyValues } from '../components/FeedbackSurvey';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { fetchInteractionEvents } from '../utils/interactionTracking';
@@ -18,6 +19,11 @@ interface FeedbackResponse {
   id: string;
   rating: number;
   comment: string;
+  found_useful: boolean | null;
+  most_useful_feature: 'recommendation' | 'compare' | 'lessons' | 'saved_devices' | null;
+  recommendation_accuracy: number | null;
+  likelihood_to_recommend: number | null;
+  plan_to_purchase: 'yes' | 'no' | 'maybe' | null;
   created_at: string;
 }
 
@@ -37,8 +43,6 @@ const Dashboard: React.FC = () => {
   const [savedDevices, setSavedDevices] = useState<SavedDevice[]>([]);
   const [interactionLogs, setInteractionLogs] = useState<InteractionLog[]>([]);
   const [feedback, setFeedback] = useState<FeedbackResponse | null>(null);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -103,7 +107,9 @@ const Dashboard: React.FC = () => {
 
         const { data: feedbackData, error: feedbackError } = await supabase
           .from('feedback_responses')
-          .select('id, rating, comment, created_at')
+          .select(
+            'id, rating, comment, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
+          )
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(1)
@@ -116,6 +122,28 @@ const Dashboard: React.FC = () => {
               id: String(feedbackData.id),
               rating: Number(feedbackData.rating),
               comment: String(feedbackData.comment ?? ''),
+              found_useful: typeof feedbackData.found_useful === 'boolean' ? feedbackData.found_useful : null,
+              most_useful_feature:
+                feedbackData.most_useful_feature === 'recommendation' ||
+                feedbackData.most_useful_feature === 'compare' ||
+                feedbackData.most_useful_feature === 'lessons' ||
+                feedbackData.most_useful_feature === 'saved_devices'
+                  ? feedbackData.most_useful_feature
+                  : null,
+              recommendation_accuracy:
+                typeof feedbackData.recommendation_accuracy === 'number'
+                  ? feedbackData.recommendation_accuracy
+                  : null,
+              likelihood_to_recommend:
+                typeof feedbackData.likelihood_to_recommend === 'number'
+                  ? feedbackData.likelihood_to_recommend
+                  : null,
+              plan_to_purchase:
+                feedbackData.plan_to_purchase === 'yes' ||
+                feedbackData.plan_to_purchase === 'no' ||
+                feedbackData.plan_to_purchase === 'maybe'
+                  ? feedbackData.plan_to_purchase
+                  : null,
               created_at: String(feedbackData.created_at ?? '')
             }
           : null;
@@ -129,8 +157,6 @@ const Dashboard: React.FC = () => {
 
         setSavedDevices(normalizedSavedDevices);
         setFeedback(normalizedFeedback);
-        setRating(normalizedFeedback?.rating ?? 0);
-        setComment(normalizedFeedback?.comment ?? '');
         setInteractionLogs(normalizedInteractions);
       } catch (error: any) {
         if (!isMounted) return;
@@ -170,7 +196,6 @@ const Dashboard: React.FC = () => {
       recommendationViews,
       comparisonClicks,
       trackedActions,
-      feedbackRating: feedback?.rating ?? null,
       latestActivity
     };
   }, [feedback, interactionLogs, savedDevices]);
@@ -197,11 +222,10 @@ const Dashboard: React.FC = () => {
     setSavedDevices(previous => previous.filter(device => device.id !== savedId));
   };
 
-  const handleSubmitFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmitFeedback = async (values: SurveyValues) => {
     if (!user?.id) return;
 
-    if (rating < 1 || rating > 5) {
+    if (values.rating < 1 || values.rating > 5) {
       setFeedbackMessage('Please choose a rating from 1 to 5 before submitting.');
       return;
     }
@@ -213,10 +237,20 @@ const Dashboard: React.FC = () => {
       if (feedback?.id) {
         const { data, error } = await supabase
           .from('feedback_responses')
-          .update({ rating, comment: comment.trim() })
+          .update({
+            rating: values.rating,
+            comment: values.comment.trim(),
+            found_useful: values.found_useful,
+            most_useful_feature: values.most_useful_feature,
+            recommendation_accuracy: values.recommendation_accuracy,
+            likelihood_to_recommend: values.likelihood_to_recommend,
+            plan_to_purchase: values.plan_to_purchase
+          })
           .eq('id', feedback.id)
           .eq('user_id', user.id)
-          .select('id, rating, comment, created_at')
+          .select(
+            'id, rating, comment, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
+          )
           .single();
 
         if (error) throw error;
@@ -225,13 +259,27 @@ const Dashboard: React.FC = () => {
           id: String(data.id),
           rating: Number(data.rating),
           comment: String(data.comment ?? ''),
+          found_useful: typeof data.found_useful === 'boolean' ? data.found_useful : null,
+          most_useful_feature:
+            data.most_useful_feature === 'recommendation' ||
+            data.most_useful_feature === 'compare' ||
+            data.most_useful_feature === 'lessons' ||
+            data.most_useful_feature === 'saved_devices'
+              ? data.most_useful_feature
+              : null,
+          recommendation_accuracy:
+            typeof data.recommendation_accuracy === 'number' ? data.recommendation_accuracy : null,
+          likelihood_to_recommend:
+            typeof data.likelihood_to_recommend === 'number' ? data.likelihood_to_recommend : null,
+          plan_to_purchase:
+            data.plan_to_purchase === 'yes' || data.plan_to_purchase === 'no' || data.plan_to_purchase === 'maybe'
+              ? data.plan_to_purchase
+              : null,
           created_at: String(data.created_at ?? '')
         };
 
         setFeedback(updatedFeedback);
-        setRating(updatedFeedback.rating);
-        setComment(updatedFeedback.comment);
-        setFeedbackMessage('Feedback updated. Thank you for improving the study dataset.');
+        setFeedbackMessage('Survey updated. Thank you for improving the study dataset.');
         return;
       }
 
@@ -239,10 +287,17 @@ const Dashboard: React.FC = () => {
         .from('feedback_responses')
         .insert({
           user_id: user.id,
-          rating,
-          comment: comment.trim()
+          rating: values.rating,
+          comment: values.comment.trim(),
+          found_useful: values.found_useful,
+          most_useful_feature: values.most_useful_feature,
+          recommendation_accuracy: values.recommendation_accuracy,
+          likelihood_to_recommend: values.likelihood_to_recommend,
+          plan_to_purchase: values.plan_to_purchase
         })
-        .select('id, rating, comment, created_at')
+        .select(
+          'id, rating, comment, found_useful, most_useful_feature, recommendation_accuracy, likelihood_to_recommend, plan_to_purchase, created_at'
+        )
         .single();
 
       if (error) throw error;
@@ -251,11 +306,27 @@ const Dashboard: React.FC = () => {
         id: String(data.id),
         rating: Number(data.rating),
         comment: String(data.comment ?? ''),
+        found_useful: typeof data.found_useful === 'boolean' ? data.found_useful : null,
+        most_useful_feature:
+          data.most_useful_feature === 'recommendation' ||
+          data.most_useful_feature === 'compare' ||
+          data.most_useful_feature === 'lessons' ||
+          data.most_useful_feature === 'saved_devices'
+            ? data.most_useful_feature
+            : null,
+        recommendation_accuracy:
+          typeof data.recommendation_accuracy === 'number' ? data.recommendation_accuracy : null,
+        likelihood_to_recommend:
+          typeof data.likelihood_to_recommend === 'number' ? data.likelihood_to_recommend : null,
+        plan_to_purchase:
+          data.plan_to_purchase === 'yes' || data.plan_to_purchase === 'no' || data.plan_to_purchase === 'maybe'
+            ? data.plan_to_purchase
+            : null,
         created_at: String(data.created_at ?? '')
       };
 
       setFeedback(createdFeedback);
-      setFeedbackMessage('Feedback submitted. Your response is now part of the research evidence.');
+      setFeedbackMessage('Survey submitted. Your response is now part of the research evidence.');
     } catch (error: any) {
       setFeedbackMessage(error?.message ?? 'Unable to submit feedback right now.');
     } finally {
@@ -283,10 +354,10 @@ const Dashboard: React.FC = () => {
       value: `${stats.comparisonClicks}`
     },
     {
-      title: 'Feedback Rating',
+      title: 'Survey Status',
       meta: 'Research',
-      description: feedback ? 'Your latest system effectiveness rating.' : 'Submit your first rating.',
-      value: stats.feedbackRating ? `${stats.feedbackRating}/5` : 'Pending'
+      description: feedback ? 'Your latest multi-question survey response.' : 'Submit your first response.',
+      value: feedback ? 'Submitted' : 'Pending'
     }
   ];
 
@@ -392,45 +463,23 @@ const Dashboard: React.FC = () => {
           </section>
 
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Rate DeviceLabs Effectiveness</h2>
+            <h2 className={styles.sectionTitle}>DeviceSelect Usefulness Survey</h2>
             <p className={styles.sectionDescription}>
               One response per student. Submitting again updates your existing response.
             </p>
-            <form className={styles.feedbackForm} onSubmit={handleSubmitFeedback}>
-              <label className={styles.fieldLabel} htmlFor="feedback-rating">Rating (1 to 5)</label>
-              <select
-                id="feedback-rating"
-                className={styles.fieldInput}
-                value={rating}
-                onChange={event => setRating(Number(event.target.value))}
-                required
-              >
-                <option value={0}>Select a rating</option>
-                <option value={1}>1 - Very Poor</option>
-                <option value={2}>2 - Poor</option>
-                <option value={3}>3 - Fair</option>
-                <option value={4}>4 - Good</option>
-                <option value={5}>5 - Excellent</option>
-              </select>
-
-              <label className={styles.fieldLabel} htmlFor="feedback-comment">
-                Comment (optional)
-              </label>
-              <textarea
-                id="feedback-comment"
-                className={styles.fieldInput}
-                value={comment}
-                onChange={event => setComment(event.target.value)}
-                rows={4}
-                placeholder="Share what helped or what should improve."
-              />
-
-              <div className={styles.sectionActions}>
-                <button type="submit" className={styles.inlineButton} disabled={isSubmitting}>
-                  {feedback ? 'Update Feedback' : 'Submit Feedback'}
-                </button>
-              </div>
-            </form>
+            <FeedbackSurvey
+              initialValues={{
+                rating: feedback?.rating ?? 0,
+                found_useful: feedback?.found_useful ?? null,
+                most_useful_feature: feedback?.most_useful_feature ?? null,
+                recommendation_accuracy: feedback?.recommendation_accuracy ?? null,
+                likelihood_to_recommend: feedback?.likelihood_to_recommend ?? null,
+                plan_to_purchase: feedback?.plan_to_purchase ?? null,
+                comment: feedback?.comment ?? ''
+              }}
+              isSubmitting={isSubmitting}
+              onSubmit={handleSubmitFeedback}
+            />
             {feedbackMessage && <p className={styles.note}>{feedbackMessage}</p>}
           </section>
         </>
