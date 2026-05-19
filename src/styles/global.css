@@ -16,6 +16,7 @@
   --accent-violet-hover: var(--accent-hover);
   --glass-bg: var(--card-bg);
   --gradient-main: var(--bg-gradient);
+  --thumbnail-placeholder-gradient: linear-gradient(145deg, rgba(79, 70, 229, 0.45), rgba(124, 58, 237, 0.32), rgba(15, 23, 42, 0.88));
   --nav-height: 70px;
 }
 
